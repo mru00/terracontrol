@@ -1,0 +1,123 @@
+/* 
+ * terrarium control
+ * mru, november 2009
+ *
+ */
+
+#include <stdio.h>
+#include <util/twi.h>
+
+#include "common.h"
+
+// DS1307 registers
+enum {
+  DR_SECONDS,
+  DR_MINUTES,
+  DR_HOURS,
+  DR_DAY,              // weekday
+  DR_DATE,
+  DR_MONTH,
+  DR_YEAR,
+  DR_CONTROL,
+  DR_RAM,
+};
+
+enum {
+  DC_CH = 7   // clock halt in CR_SECONDS
+};
+
+
+// DS1307 Control register bits
+enum {
+  DC_RS0,   // 
+  DC_RS1,   // rate select
+  DC_NA1,
+  DC_NA2,
+  DC_SQWE,  // square-wave enable
+  DC_NA3,
+  DC_NA4,
+  DC_OUT    // output control
+};
+
+struct bcd_t {
+  uint8_t hi: 4;
+  uint8_t lo: 4;
+};
+
+
+union bcd_dec_t {
+  uint8_t dec;
+  struct bcd_t bcd;
+};
+
+static uint8_t to_bcd(uint8_t val) {
+  uint8_t hi = (val / 10) & 0xf;
+  uint8_t lo = (val - hi*10) & 0xf;
+  return (hi<<4) + lo;
+}
+
+
+static uint8_t from_bcd(uint8_t val) {
+  return ( (val & 0xf0) >> 4 )*10 + (val & 0x0f);
+}
+
+
+void ds1307_init(void) {
+
+  uint8_t t;
+
+  i2c_c_read_start(DS1307_ADDRESS, DR_SECONDS);
+  t = i2c_c_read_last();
+
+  // the clock was reset - reinitialize
+  if ( t & _BV(DC_CH) ) {
+
+	i2c_c_write_start(DS1307_ADDRESS);
+	i2c_c_write_next ( DR_SECONDS );
+	i2c_c_write_next ( 0 ); // set CH to 0, start oscillator, set seconds to 0
+	i2c_c_write_next ( 0 ); // set minutes to 0
+	i2c_c_write_next ( 0 ); // set hours to 0
+	i2c_c_write_next ( 0 ); // set day to 0
+	i2c_c_write_next ( 0 ); // set date to 0
+	i2c_c_write_next ( 0 ); // set month to 0
+	i2c_c_write_next ( 0 ); // set year to 0
+	i2c_c_write_last ( _BV(DC_SQWE)  ); // set SquareWave enable, rate select = 0 -> 1Hz
+  }
+
+}
+
+void ds1307_setdate(uint8_t y, uint8_t m, uint8_t d) {
+
+  i2c_c_write_start(DS1307_ADDRESS);
+  i2c_c_write_next ( DR_DATE );
+  i2c_c_write_next ( to_bcd(d) );
+  i2c_c_write_next ( to_bcd(m) );
+  i2c_c_write_last ( to_bcd(y) );
+
+}
+
+
+void ds1307_settime(uint8_t h, uint8_t m, uint8_t s) {
+
+  i2c_c_write_start(DS1307_ADDRESS);
+  i2c_c_write_next ( DR_SECONDS );
+  i2c_c_write_next ( to_bcd(s) & 0x7f );
+  i2c_c_write_next ( to_bcd(m) );
+  i2c_c_write_last ( to_bcd(h)  );
+
+}
+
+time_t ds1307_gettime(void) {
+
+  time_t t;
+
+  i2c_c_write_start(DS1307_ADDRESS);
+  i2c_c_write_last ( DR_SECONDS );
+
+  i2c_c_read_start(DS1307_ADDRESS, DR_SECONDS);
+  t =  from_bcd(i2c_c_read_next());
+  t += from_bcd(i2c_c_read_next())*60;
+  t += from_bcd(i2c_c_read_last())*60*60;
+
+  return t;
+}

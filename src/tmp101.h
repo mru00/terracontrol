@@ -1,0 +1,20 @@
+/* 
+ * terrarium control
+ * mru, november 2009
+ *
+ */
+
+
+
+#pragma once
+
+
+// .100 1xxx
+#define TMP101_BASE_ADRESS 0x48
+
+extern void tmp101_init(uint8_t id);
+extern uint8_t tmp101_gettemp(uint8_t id);
+
+
+
+

@@ -1,0 +1,28 @@
+
+avr on gentoo:
+http://tobias.preclik.de/codeblog/?page_id=51
+
+
+
+bauteileliste:
+
+
+ATMEGA8-16PU
+MAX232
+SHT11
+7805
+
+
+1 x XTAL 11.0592 MHz
+2 x 12pF - 22pF
+
+MAX232:
+
+5 x 1uF
+
+
+POWER
+
+1 x 100nF
+1 x 10uF
+

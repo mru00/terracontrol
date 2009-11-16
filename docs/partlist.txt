@@ -1,0 +1,53 @@
+
+
+clock:
+0x  DS1307+           Sample @ MAXIM-IC.com
+3x  32.768 KHz XTAL   Farnell
+
+
+mcu:
+4x  ATMEGA8-16PU      Farnell
+3x  11.0592 MHz XTAL  Farnell
+6x  22pF Cap    	  Farnell
+
+
+rs232:
+12x 1uF Tantal		  Farnell
+0x  max232			  sample @ MAXIM-IC.com
+
+
+relais:
+0x DS2003			  sample @ ti.com
+4x relais
+
+
+sensor:
+4x sht71		      Farnell
+
+stecker:
+4x 9-pol subd
+? zu den lampen
+
+
+
+power supply:
+0x  7805			  Sample @ TI.com
+4x 47uF				  Farnell
+4x cap klein
+
+
+gehaeuse:
+? schrauben
+
+
+
+platine & loetzeugs:
+3x  lochraster		  Farnell
+    faedeldraht		  Farnell
+	zinn			  Farnell
+	
+
+
+
+	 
+
