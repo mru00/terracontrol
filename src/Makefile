@@ -53,9 +53,9 @@ FORMAT = ihex
 # Target file name (without extension).
 TARGET = terrarium
 
-
 # List C source files here. (C dependencies are automatically generated.)
-SRC = main.c misc.c uart.c time.c timeswitch.c tlv5620.c portmap.c tmp101.c i2c.c ds1307.c
+SRC = main.c  uart.c time.c timeswitch.c portmap.c tmp101.c i2c.c ds1307.c commandline.c
+# tlv5620.c misc.c
 
 # List Assembler source files here.
 # Make them always end in a capital .S.  Files ending in a lowercase .s

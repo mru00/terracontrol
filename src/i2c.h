@@ -5,6 +5,12 @@
  *
  * please note that the only difference between write_w and write_r are
  * the different expected states, which are only checked if I2C_DEBUG is set.
+ *
+ * uses :
+ *
+ *  - TWI hardware
+ *  - PORTC/PC5
+ *  - PORTC/PC4
  */
 
 
@@ -13,6 +19,9 @@
 
 // uncomment to enable debug output
 //#define I2C_DEBUG
+
+#define I2C_USE_INTERNAL_PULLUP
+
 
 
 extern void i2c_init(void);

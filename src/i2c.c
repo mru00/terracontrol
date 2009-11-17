@@ -46,9 +46,12 @@ void i2c_init(void) {
 
   LOG_INIT();
 
+
+#ifdef I2C_USE_INTERNAL_PULLUP
   // enable internal pull-ups
   DDRC &= ~( _BV(PC5) | _BV(PC4) );
   PORTC |= _BV(PC5) | _BV(PC4);
+#endif
 
   // enable TWI
   TWCR = _BV(TWEN) | _BV(TWIE);

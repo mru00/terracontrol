@@ -56,6 +56,7 @@ uart_constructor(void) {
 }
 
 
+
 int
 main(void)
 {
@@ -85,6 +86,7 @@ main(void)
   i2c_init();
   ds1307_init();
   tmp101_init(TMP101_ID);
+  commandline_init();
 
   _delay_ms(100);
 
@@ -94,11 +96,12 @@ main(void)
 
 	if ( input != UART_NO_DATA ) {
 
-	  uart_putc(input & 0xff);
 
 	  if ( (input & 0xff) == '\r' ) {
-		print_current_time();
-		puts("\r\n");
+		commandline_processline();
+	  }
+	  else {
+		commandline_addchar(input & 0xff);
 	  }
 	}
 
@@ -107,12 +110,12 @@ main(void)
 	  timeswitch_check(time_now());
 	  temp = tmp101_gettemp(TMP101_ID);
 
-	  printf("time: " TIME_PRINTF_MASK " temp: %d\r\n", TIME_PRINTF_DATA(current_time), temp);
+	  //	  printf("time: " TIME_PRINTF_MASK " temp: %dC\r\n", TIME_PRINTF_DATA(current_time), temp);
 
 	}
   }
 
-
+						
 }
 
 

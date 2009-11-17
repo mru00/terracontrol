@@ -2,6 +2,11 @@
  * terrarium control
  * mru, november 2009
  *
+ *
+ * uses:
+ *
+ *  - module i2c
+ *
  */
 
 

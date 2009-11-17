@@ -24,11 +24,12 @@ struct port_pin_t {
 };
 
 
-#if 0
+#if 1
 #  define LOG_INIT()
 #else
 #  define LOG_INIT() puts ( " init: " __FILE__ )
 #endif
+
 
 #define nop() do { asm volatile("nop"); } while (0)
 
@@ -41,3 +42,4 @@ struct port_pin_t {
 #include "portmap.h"
 #include "tmp101.h"
 #include "ds1307.h"
+#include "commandline.h"

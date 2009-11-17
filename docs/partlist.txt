@@ -9,6 +9,7 @@ mcu:
 4x  ATMEGA8-16PU      Farnell
 3x  11.0592 MHz XTAL  Farnell
 6x  22pF Cap    	  Farnell
+8x  pullup i2c		  Farnell
 
 
 rs232:
