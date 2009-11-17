@@ -2,6 +2,8 @@
  * terrarium control
  * mru, november 2009
  *
+ * RTC without RTC...
+ *
  */
 
 

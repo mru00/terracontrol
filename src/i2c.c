@@ -12,9 +12,8 @@
 
 #include "common.h"
 
-
-#define I2C_WRITE_ADR(x) (x << 1)
-#define I2C_READ_ADR(x) ( (x << 1) | 1 ) 
+#define I2C_WRITE_ADR(x) ( (x << 1) + TW_WRITE )
+#define I2C_READ_ADR(x) ( (x << 1) + TW_READ ) 
 
 
 #ifdef I2C_DEBUG
@@ -45,10 +44,11 @@ static void i2c_assert_state2(uint8_t state, const char* msg) {
 
 void i2c_init(void) {
 
+  LOG_INIT();
+
   // enable internal pull-ups
   DDRC &= ~( _BV(PC5) | _BV(PC4) );
   PORTC |= _BV(PC5) | _BV(PC4);
-
 
   // enable TWI
   TWCR = _BV(TWEN) | _BV(TWIE);
@@ -62,7 +62,7 @@ void i2c_init(void) {
 void i2c_start(void) {
 
   TWCR = _BV(TWINT) | _BV(TWSTA) | _BV(TWEN);
-  while( !(TWCR & _BV(TWINT) ));
+  loop_until_bit_is_set(TWCR, TWINT);
 
   ACTIVE_ADDRESS(0xff);
   ASSERT_STATE(TW_START);
@@ -71,6 +71,7 @@ void i2c_start(void) {
 void i2c_stop(void) {
   TWCR = _BV(TWINT) | _BV(TWSTO) | _BV(TWEN);
   ACTIVE_ADDRESS(0xff);
+  ASSERT_STATE(TW_NO_INFO);
 }
 
 
@@ -78,7 +79,7 @@ void i2c_address_r( uint8_t addr ) {
   TWDR = I2C_READ_ADR(addr);
   TWCR = _BV(TWINT) | _BV(TWEN);
 
-  while( !(TWCR & _BV(TWINT) ));
+  loop_until_bit_is_set(TWCR, TWINT);
 
   ACTIVE_ADDRESS(addr);
   ASSERT_STATE(TW_MR_SLA_ACK);
@@ -88,7 +89,7 @@ void i2c_address_w( uint8_t addr ) {
   TWDR = I2C_WRITE_ADR(addr);
   TWCR = _BV(TWINT) | _BV(TWEN);
 
-  while( !(TWCR & _BV(TWINT) ));
+  loop_until_bit_is_set(TWCR, TWINT);
 
   ACTIVE_ADDRESS(addr);
   ASSERT_STATE(TW_MT_SLA_ACK);
@@ -98,7 +99,7 @@ void i2c_write_r( uint8_t data ) {
   TWDR = data;
   TWCR = _BV(TWINT) | _BV(TWEN);
 
-  while( !(TWCR & _BV(TWINT) ));
+  loop_until_bit_is_set(TWCR, TWINT);
 
   ASSERT_STATE(TW_MR_DATA_ACK);
 }
@@ -107,7 +108,7 @@ void i2c_write_w( uint8_t data ) {
   TWDR = data;
   TWCR = _BV(TWINT) | _BV(TWEN);
 
-  while( !(TWCR & _BV(TWINT) ));
+  loop_until_bit_is_set(TWCR, TWINT);
 
   ASSERT_STATE(TW_MT_DATA_ACK);
 }
@@ -116,7 +117,7 @@ uint8_t i2c_read_nack(void) {
 
   TWCR = _BV(TWINT) | _BV(TWEN);
 
-  while( !(TWCR & _BV(TWINT) ));
+  loop_until_bit_is_set(TWCR, TWINT);
 
   ASSERT_STATE(TW_MR_DATA_NACK);
 
@@ -127,45 +128,9 @@ uint8_t i2c_read_ack(void) {
 
   TWCR = _BV(TWINT) | _BV(TWEN) | _BV(TWEA);
 
-  while( !(TWCR & _BV(TWINT) ));
+  loop_until_bit_is_set(TWCR, TWINT);
 
   ASSERT_STATE(TW_MR_DATA_ACK);
 
   return TWDR;
-}
-
-
-
-void i2c_c_read_start(uint8_t address, uint8_t reg) {
-  i2c_start();
-  i2c_address_w( address );
-  i2c_write_w ( reg );
-  i2c_stop();
-  i2c_start();
-  i2c_address_r( address );
-}
-
-uint8_t i2c_c_read_next(void) {
-  return  i2c_read_ack();
-}
-
-uint8_t i2c_c_read_last(void) {
-  uint8_t v =  i2c_read_nack();
-  i2c_stop();
-  return v;
-}
-
-
-void i2c_c_write_start(uint8_t address) {
-	i2c_start();
-	i2c_address_w( DS1307_ADDRESS );
-}
-
-void i2c_c_write_next(uint8_t data) {
-  i2c_write_w ( data );
-}
-
-void i2c_c_write_last(uint8_t data) {
-  i2c_write_w ( data );
-  i2c_stop();
 }

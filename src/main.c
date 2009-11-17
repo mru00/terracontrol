@@ -20,6 +20,16 @@
 #define UART_BAUD_RATE     38400
 
 
+
+static struct port_pin_t __attribute__((pure))
+portpin(const uint8_t port, const uint8_t pin) {
+  struct port_pin_t t;
+  t.po = port;
+  t.pi = pin;
+  return t;
+}
+
+
 // wrapper for fdevopen
 int uart_fdev(char c, FILE* x) {
   uart_putc((unsigned char)c);
@@ -28,6 +38,7 @@ int uart_fdev(char c, FILE* x) {
 
 
 static void init_ports(void) {
+
   DDRD = 0xff;
   DDRB = 0xff;
   DDRC = 0xff;
@@ -37,30 +48,39 @@ static void init_ports(void) {
 
 #define TMP101_ID 1
 
-int main(void)
+
+void __attribute__((constructor)) 
+uart_constructor(void) {
+  uart_init(UART_BAUD_SELECT(UART_BAUD_RATE,XTAL));
+  fdevopen(uart_fdev, 0);
+}
+
+
+int
+main(void)
 {
   unsigned int input;
   uint8_t temp = 0;
 
-  uart_init(UART_BAUD_SELECT(UART_BAUD_RATE,XTAL));
-  fdevopen(uart_fdev, 0);
+
+  sei();
+
 
   portmap_init();
   init_ports();
   time_init();
-  timeswitch_init();
 
-  tlv_setup_port(nPORTD, PD6,   // LOAD
-				 nPORTB, PB0,   // CLK
-				 nPORTD, PD7,   // DATA
-				 nPORTD, PD5);  // LDAC
-
-  timeswitch_set(0, 12, 15, nPORTC, PC3);
-  timeswitch_set(2, 3, 9, nPORTC, PC3);
-  
-  sei();
 
   puts("\r\n welcome to the atmel board!\r\n\r\n");
+
+  timeswitch_init();
+  timeswitch_set(0, 12, 15,   portpin(nPORTC, PC3));
+  timeswitch_set(1, 100, 103, portpin(nPORTC, PC3));
+  timeswitch_set(2, 70, 78,   portpin(nPORTC, PC3));
+  timeswitch_set(3, 30, 35,   portpin(nPORTC, PC3));
+  timeswitch_set(4, 22, 25,   portpin(nPORTC, PC3));
+  timeswitch_set(5, 3, 9,     portpin(nPORTC, PC3));
+
 
   i2c_init();
   ds1307_init();
@@ -70,8 +90,6 @@ int main(void)
 
   for(;;) {
 
-	_delay_ms(5);
-
 	input = uart_getc();
 
 	if ( input != UART_NO_DATA ) {
@@ -79,7 +97,7 @@ int main(void)
 	  uart_putc(input & 0xff);
 
 	  if ( (input & 0xff) == '\r' ) {
-		time_current_print();
+		print_current_time();
 		puts("\r\n");
 	  }
 	}
@@ -90,7 +108,12 @@ int main(void)
 	  temp = tmp101_gettemp(TMP101_ID);
 
 	  printf("time: " TIME_PRINTF_MASK " temp: %d\r\n", TIME_PRINTF_DATA(current_time), temp);
+
 	}
-  }                                                       
+  }
+
+
 }
+
+
 

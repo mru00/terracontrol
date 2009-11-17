@@ -10,6 +10,7 @@
 
 #include <avr/io.h>
 #include <avr/eeprom.h>
+#include <stdio.h>
 #include "common.h"
 
 // enable this define to utilize the LDAC line:
@@ -38,7 +39,7 @@ static inline void write_tlv(const uint8_t x) {
 }
 
 void tlv_init(void) {
-
+  LOG_INIT();
 }
 
 

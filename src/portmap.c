@@ -2,23 +2,41 @@
  * terrarium control
  * mru, november 2009
  *
- * portmap
+ * portmap, provides indirection to ports with port id's 
  *
  */
 
 #include <avr/io.h>
+#include <stdio.h>
 
 #include "common.h"
 
-#define NULL ((void*)(0))
+
+#ifndef NULL
+#  define NULL ((void*)(0))
+#endif
 
 
-port_t portmap[4];
+port_t portmap[nPORTLAST];
+port_t ddrmap[nPORTLAST];
+port_t pinmap[nPORTLAST];
+
 
 void portmap_init(void) {
 
-  portmap[0] = NULL;
-  portmap[1] = &PORTB;
-  portmap[2] = &PORTC;
-  portmap[3] = &PORTD;
+  LOG_INIT();
+
+  portmap[nPORTB] = &PORTB;
+  portmap[nPORTC] = &PORTC;
+  portmap[nPORTD] = &PORTD;
+
+  ddrmap[nPORTB] = &DDRB;
+  ddrmap[nPORTC] = &DDRC;
+  ddrmap[nPORTD] = &DDRD;
+
+
+  pinmap[nPORTB] = &PINB;
+  pinmap[nPORTC] = &PINC;
+  pinmap[nPORTD] = &PIND;
+
 }

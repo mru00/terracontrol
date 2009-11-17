@@ -13,20 +13,18 @@
 
 #include "common.h"
 
-
-
 static struct timeswitch_t timeswitches[N_TIMESWITCHES];
-static uint8_t num_timers = 0;
+
+
 
 void timeswitch_init(void) {
-  
-  num_timers = 1;
-  
+  LOG_INIT();
 }
 
 
-void timeswitch_check(time_t now) {
 
+
+void timeswitch_check(time_t now) {
   
   uint8_t i, j;
   uint8_t x;
@@ -52,8 +50,8 @@ void timeswitch_check(time_t now) {
 	else
 	  x = now >= timeswitches[i].on  || now <= timeswitches[i].off;
 
-	care[timeswitches[i].pin.po] |= (1 << timeswitches[i].pin.pi);
-	values[timeswitches[i].pin.po] |= (x << timeswitches[i].pin.pi);
+	care[timeswitches[i].portpin.po] |= (1 << timeswitches[i].portpin.pi);
+	values[timeswitches[i].portpin.po] |= (x << timeswitches[i].portpin.pi);
   }
 
 
@@ -66,7 +64,7 @@ void timeswitch_check(time_t now) {
 }
 
 
-void timeswitch_set(uint8_t id, time_t on, time_t off, uint8_t port, uint8_t pin) {
+void timeswitch_set(uint8_t id, time_t on, time_t off, struct port_pin_t port) {
 
   if ( id < 0 || id >= N_TIMESWITCHES ) {
 	puts("illegal timeswitch id");
@@ -74,8 +72,9 @@ void timeswitch_set(uint8_t id, time_t on, time_t off, uint8_t port, uint8_t pin
   
   timeswitches[id].on = on;
   timeswitches[id].off = off;
-  timeswitches[id].pin.po = port;
-  timeswitches[id].pin.pi = pin;
+  timeswitches[id].portpin = port;
   timeswitches[id].enabled = 1;
 
+  clearpin(port);
+  setup_as_output(port);  
 }

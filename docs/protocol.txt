@@ -1,0 +1,41 @@
+
+
+einstellungen mit der seriellen schnittstelle
+
+
+Start := 
+  "SET" SetCommands
+  | "GET" GetCommands
+  | "INFO"
+  ;
+
+SetCommands := 
+  "TIMER" TimerSetCommands
+  | "TIMER
+  | "HEATING" Value
+  | "HUMIDITY" Value
+  | "TIME" Time
+  ;
+
+GetCommands :=
+  "TIMER" ID
+  | "HEATING"
+  | "HUMIDITY"
+  | "TIME"
+  ;
+
+TimerSetCommands :=
+  "ENABLED"
+  | "DISABLED"
+  |  Id Start End Output
+  ;
+
+
+ID    := numeral
+Start := Time
+End   := Time
+Ouput := numeral [ 1..4 ]
+Time  := numeral
+
+
+

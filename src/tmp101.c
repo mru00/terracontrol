@@ -34,44 +34,26 @@ enum {
 };
 
 
-
 void tmp101_init(uint8_t id) {
 
-  puts("asdf");
+  LOG_INIT();
 
   // write configuration
-  i2c_start();
-  i2c_address_w( TMP101_BASE_ADRESS + id );
-  i2c_write_w( TR_CONF );
-  i2c_write_w( _BV(TC_R0) | _BV(TC_R1) );
-  i2c_stop();
-
+  i2c_c_write_start(TMP101_BASE_ADRESS + id);
+  i2c_c_write_next( TR_CONF );
+  i2c_c_write_last( _BV(TC_R0) | _BV(TC_R1) );
 
   // select temperature register
 
-  i2c_start();
-  i2c_address_w(  TMP101_BASE_ADRESS | id );
-  i2c_write_w( TR_TEMP );
-  i2c_stop();  
+  i2c_c_write_start(TMP101_BASE_ADRESS + id);
+  i2c_c_write_last( TR_TEMP );
 }
 
 
 uint8_t tmp101_gettemp(uint8_t id) {
 
-
-  uint8_t t1;
-
-  i2c_start();
-  i2c_address_r(  TMP101_BASE_ADRESS | id );
-  t1 = i2c_read_nack();
-
-  // we only read the first byte
-  // we don't generate an ACK
-  // we simply stop, should suffice
-
-  i2c_stop();
-
-  return t1;
+  i2c_c_read_start(TMP101_BASE_ADRESS + id);
+  return i2c_c_read_last();
 }
 
 

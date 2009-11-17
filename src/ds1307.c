@@ -9,6 +9,11 @@
 
 #include "common.h"
 
+// .110 1000 = 0x68
+#define DS1307_ADDRESS 0x68
+
+
+
 // DS1307 registers
 enum {
   DR_SECONDS,
@@ -39,34 +44,27 @@ enum {
   DC_OUT    // output control
 };
 
-struct bcd_t {
-  uint8_t hi: 4;
-  uint8_t lo: 4;
-};
 
-
-union bcd_dec_t {
-  uint8_t dec;
-  struct bcd_t bcd;
-};
-
-static uint8_t to_bcd(uint8_t val) {
+static inline uint8_t __attribute__((pure))
+to_bcd(uint8_t val) {
   uint8_t hi = (val / 10) & 0xf;
   uint8_t lo = (val - hi*10) & 0xf;
   return (hi<<4) + lo;
 }
 
-
-static uint8_t from_bcd(uint8_t val) {
+static inline uint8_t __attribute__((pure))
+from_bcd(uint8_t val) {
   return ( (val & 0xf0) >> 4 )*10 + (val & 0x0f);
 }
 
 
 void ds1307_init(void) {
 
+  LOG_INIT();
+
   uint8_t t;
 
-  i2c_c_read_start(DS1307_ADDRESS, DR_SECONDS);
+  i2c_c_read_start_reg(DS1307_ADDRESS, DR_SECONDS);
   t = i2c_c_read_last();
 
   // the clock was reset - reinitialize
@@ -111,10 +109,7 @@ time_t ds1307_gettime(void) {
 
   time_t t;
 
-  i2c_c_write_start(DS1307_ADDRESS);
-  i2c_c_write_last ( DR_SECONDS );
-
-  i2c_c_read_start(DS1307_ADDRESS, DR_SECONDS);
+  i2c_c_read_start_reg(DS1307_ADDRESS, DR_SECONDS);
   t =  from_bcd(i2c_c_read_next());
   t += from_bcd(i2c_c_read_next())*60;
   t += from_bcd(i2c_c_read_last())*60*60;

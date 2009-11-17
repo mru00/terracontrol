@@ -15,7 +15,6 @@
 //#define I2C_DEBUG
 
 
-
 extern void i2c_init(void);
 extern void i2c_start(void);
 extern void i2c_stop(void);
@@ -40,16 +39,42 @@ extern uint8_t i2c_read_nack(void);
 
 
 
+// convenience functions declared inline:
 
-// conveniece
+inline void i2c_c_read_start(uint8_t address) {
+  i2c_start();
+  i2c_address_r( address );
+}
 
-// start, address_w, write_w, stop
+inline void i2c_c_read_start_reg(uint8_t address, uint8_t reg){
+  i2c_start();
+  i2c_address_w( address );
+  i2c_write_w ( reg );
+  i2c_stop();
+  i2c_start();
+  i2c_address_r( address );
+}
 
+inline uint8_t i2c_c_read_next(void) {
+  return i2c_read_ack();
+}
 
-extern void i2c_c_read_start(uint8_t address, uint8_t reg);
-extern uint8_t i2c_c_read_next(void);
-extern uint8_t i2c_c_read_last(void);
+inline uint8_t i2c_c_read_last(void) {
+  uint8_t v =  i2c_read_nack();
+  i2c_stop();
+  return v;
+}
 
-extern void i2c_c_write_start(uint8_t address);
-extern void i2c_c_write_next(uint8_t data);
-extern void i2c_c_write_last(uint8_t data);
+inline void i2c_c_write_start(uint8_t address) {
+  i2c_start();
+  i2c_address_w( address );
+}
+
+inline void i2c_c_write_next(uint8_t data) {
+  i2c_write_w ( data );
+}
+
+inline void i2c_c_write_last(uint8_t data) {
+  i2c_write_w ( data );
+  i2c_stop();
+}
