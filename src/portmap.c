@@ -17,26 +17,31 @@
 #endif
 
 
-port_t portmap[nPORTLAST];
-port_t ddrmap[nPORTLAST];
-port_t pinmap[nPORTLAST];
-
 
 void portmap_init(void) {
 
   LOG_INIT();
 
-  portmap[nPORTB] = &PORTB;
-  portmap[nPORTC] = &PORTC;
-  portmap[nPORTD] = &PORTD;
-
-  ddrmap[nPORTB] = &DDRB;
-  ddrmap[nPORTC] = &DDRC;
-  ddrmap[nPORTD] = &DDRD;
+  DDRC |= _BV(PC2);
+}
 
 
-  pinmap[nPORTB] = &PINB;
-  pinmap[nPORTC] = &PINC;
-  pinmap[nPORTD] = &PIND;
+void portmap_setpin(uint8_t value, uint8_t output) {
+
+  port_t port;
+  uint8_t pin;
+
+  switch(output) {
+  case OUTPUT_L1: port = &PORTC; pin = PC3; break;
+  default: 
+#ifdef PORTMAP_DEBUG
+	puts("wrong output number");
+#endif
+return;
+  }
+
+  if ( value )  *port |= _BV(pin);
+  else *port &= ~_BV(pin);
 
 }
+

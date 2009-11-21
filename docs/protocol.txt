@@ -1,41 +1,52 @@
 
 
 einstellungen mit der seriellen schnittstelle
+case insensitive
+
 
 
 Start := 
+  Command '\r'
+  ;
+
+Command :=
   "SET" SetCommands
   | "GET" GetCommands
-  | "INFO"
+  | "HELLO"                        // greeting command
   ;
 
 SetCommands := 
-  "TIMER" TimerSetCommands
-  | "TIMER
-  | "HEATING" Value
-  | "HUMIDITY" Value
+  "TIMER" Id TimerSetCommands
+  | "TEMPSETPOINT"
+  | "HUMIDITYSETPOINT"
   | "TIME" Time
+  | "OUTPUT" Id Name Enabled
   ;
 
 GetCommands :=
-  "TIMER" ID
-  | "HEATING"
+  "TIMERS"
+  | "TEMP"
+  | "TEMPSETPOINT"
   | "HUMIDITY"
+  | "HUMIDITYSETPOINT"
   | "TIME"
+  | "OUTPUTS"
+  | "VERSION"
   ;
 
 TimerSetCommands :=
-  "ENABLED"
-  | "DISABLED"
-  |  Id Start End Output
+  Start End Output
+  | ON
+  | OFF
   ;
 
 
+Enabled := 0 | 1
 ID    := numeral
 Start := Time
 End   := Time
 Ouput := numeral [ 1..4 ]
-Time  := numeral
+Time  := "hh:mm:ss"
 
 
 

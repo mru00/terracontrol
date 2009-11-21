@@ -54,7 +54,7 @@ FORMAT = ihex
 TARGET = terrarium
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = main.c  uart.c time.c timeswitch.c portmap.c tmp101.c i2c.c ds1307.c commandline.c
+SRC = main.c  uart.c time.c timeswitch.c portmap.c tmp101.c i2c.c ds1307.c commandline.c eeprom.c
 # tlv5620.c misc.c
 
 # List Assembler source files here.
@@ -136,7 +136,8 @@ PRINTF_LIB_MIN = -Wl,-u,vfprintf -lprintf_min
 # Floating point printf version (requires MATH_LIB = -lm below)
 PRINTF_LIB_FLOAT = -Wl,-u,vfprintf -lprintf_flt
 
-PRINTF_LIB = $(PRINTF_LIB_FLOAT)
+PRINTF_LIB = 
+#$(PRINTF_LIB_FLOAT)
 
 # Minimalistic scanf version
 SCANF_LIB_MIN = -Wl,-u,vfscanf -lscanf_min
@@ -286,7 +287,7 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 
 
 # Default target.
-all: build  
+all: build sizeafter
 
 build: elf hex eep lss sym
 

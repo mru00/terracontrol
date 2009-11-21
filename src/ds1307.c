@@ -107,12 +107,11 @@ void ds1307_settime(uint8_t h, uint8_t m, uint8_t s) {
 
 time_t ds1307_gettime(void) {
 
-  time_t t;
-
   i2c_c_read_start_reg(DS1307_ADDRESS, DR_SECONDS);
-  t =  from_bcd(i2c_c_read_next());
-  t += from_bcd(i2c_c_read_next())*60;
-  t += from_bcd(i2c_c_read_last())*60*60;
 
-  return t;
+  uint8_t s = from_bcd(i2c_c_read_next());
+  uint8_t m = from_bcd(i2c_c_read_next());
+  uint8_t h = from_bcd(i2c_c_read_last());
+
+  return  time_from_hms(h, m, s);
 }

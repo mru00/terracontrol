@@ -16,20 +16,7 @@
 
 
 #define SECONDS_PER_DAY 86400
-
-
-#define H(t) ((t/3600UL))
-#define M(t) ((t / 60UL) - H(t)*60UL)
-#define S(t) (t  - (H(t)*3600UL + M(t)*60UL))
-
-// abstract printf 
-#define TIME_PRINTF_MASK "%02u:%02u:%02u (=%lu)"
-#define TIME_PRINTF_DATA(t) (uint8_t)H(t), (uint8_t)M(t), (uint8_t)S(t), current_time
-
-// an example:
-#define print_current_time() do { printf( TIME_PRINTF_MASK, TIME_PRINTF_DATA(time_now())); } while (0)
-
-
+#define TIME_STR_SIZE 9
 
 extern time_t volatile current_time;
 
@@ -51,3 +38,26 @@ inline time_t const __attribute__((pure))
 time_now(void) {
   return current_time;
 }
+
+
+
+inline uint8_t time_get_s(time_t t) { return t & 0xff; }
+inline uint8_t time_get_m(time_t t) { return (t>>8) & 0xff; }
+inline uint8_t time_get_h(time_t t) { return (t>>16) & 0xff; }
+
+
+// tostring. 
+// returns buf again, to be used in something like: 
+//  puts(time_str(buffer, time_now()));
+inline char* time_str(char* buf, time_t time) {
+  sprintf(buf, "%02d:%02d:%02d" , time_get_h(time), time_get_m(time), time_get_s(time) );
+  return buf;
+}
+
+// h, m, s must be in decimal!
+inline time_t time_from_hms(uint32_t h, uint32_t m, uint32_t s) {
+  return (h << 16) + (m << 8) + (s);
+}
+
+
+

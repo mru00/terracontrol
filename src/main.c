@@ -18,17 +18,16 @@
 
 
 #define UART_BAUD_RATE     38400
+#define TMP101_ID 1
 
 
 
-static struct port_pin_t __attribute__((pure))
-portpin(const uint8_t port, const uint8_t pin) {
-  struct port_pin_t t;
-  t.po = port;
-  t.pi = pin;
-  return t;
-}
 
+
+uint8_t temp = 0;
+uint8_t temp_setpoint;
+uint8_t humidity;
+uint8_t humidity_setpoint;
 
 // wrapper for fdevopen
 int uart_fdev(char c, FILE* x) {
@@ -36,17 +35,12 @@ int uart_fdev(char c, FILE* x) {
   return 0;
 }
 
-
 static void init_ports(void) {
-
   DDRD = 0xff;
   DDRB = 0xff;
   DDRC = 0xff;
   PORTC = 0x00;
 }
-
-
-#define TMP101_ID 1
 
 
 void __attribute__((constructor)) 
@@ -56,32 +50,25 @@ uart_constructor(void) {
 }
 
 
-
 int
 main(void)
 {
   unsigned int input;
-  uint8_t temp = 0;
 
+
+  eeprom_init();
 
   sei();
-
 
   portmap_init();
   init_ports();
   time_init();
 
-
   puts("\r\n welcome to the atmel board!\r\n\r\n");
 
   timeswitch_init();
-  timeswitch_set(0, 12, 15,   portpin(nPORTC, PC3));
-  timeswitch_set(1, 100, 103, portpin(nPORTC, PC3));
-  timeswitch_set(2, 70, 78,   portpin(nPORTC, PC3));
-  timeswitch_set(3, 30, 35,   portpin(nPORTC, PC3));
-  timeswitch_set(4, 22, 25,   portpin(nPORTC, PC3));
-  timeswitch_set(5, 3, 9,     portpin(nPORTC, PC3));
-
+  //  timeswitch_set(0, time_from_hms(0,0,3), time_from_hms(0,0,5), OUTPUT_L1, 1);
+  //  timeswitch_set(1, time_from_hms(0,1,3), time_from_hms(0,1,5), OUTPUT_L1, 1);
 
   i2c_init();
   ds1307_init();
@@ -95,26 +82,16 @@ main(void)
 	input = uart_getc();
 
 	if ( input != UART_NO_DATA ) {
-
-
-	  if ( (input & 0xff) == '\r' ) {
-		commandline_processline();
-	  }
-	  else {
-		commandline_addchar(input & 0xff);
-	  }
+	  commandline_addchar(input & 0xff);
 	}
 
 	if ( time_updated() ) { 
 
-	  timeswitch_check(time_now());
 	  temp = tmp101_gettemp(TMP101_ID);
-
-	  //	  printf("time: " TIME_PRINTF_MASK " temp: %dC\r\n", TIME_PRINTF_DATA(current_time), temp);
+	  timeswitch_check(time_now());
 
 	}
   }
-
 						
 }
 

@@ -18,6 +18,12 @@ typedef uint8_t pin_t;
 typedef volatile uint8_t* port_t;
 
 
+extern uint8_t temp;
+extern uint8_t temp_setpoint;
+extern uint8_t humidity;
+extern uint8_t humidity_setpoint;
+
+
 struct port_pin_t {
   uint8_t po:4;
   uint8_t pi:4;
@@ -43,3 +49,5 @@ struct port_pin_t {
 #include "tmp101.h"
 #include "ds1307.h"
 #include "commandline.h"
+#include "eeprom.h"
+#include "version.h"
