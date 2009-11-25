@@ -79,6 +79,12 @@ inline void i2c_c_write_start(uint8_t address) {
   i2c_address_w( address );
 }
 
+inline void i2c_c_write_start_reg(uint8_t address, uint8_t reg) {
+  i2c_start();
+  i2c_address_w( address );
+  i2c_write_w ( reg );  
+}
+
 inline void i2c_c_write_next(uint8_t data) {
   i2c_write_w ( data );
 }

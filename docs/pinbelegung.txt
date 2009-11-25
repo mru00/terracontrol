@@ -1,33 +1,41 @@
 
-1   PC6/RESET    ISP-RESET
+1   PC6/RESET    <- ISP-RESET
+
 2   PD0/RXD      <- MAX232
 3   PD1/TXD      -> MAX232
+
 4   PD2/INT0     <- DS1307 - interrupt
-5   PD3/INT1     ->
-6   PD4/XCK/TO   ->
+
+5   PD3/INT1     ->  
+6   PD4/XCK/TO   -> 
+
 7   VCC          -> VCC
 8   GND          -> GND
-9   PB6/XTAL     -> XTAL
-10  PB7/XTAL     -> XTAL
-11  PD5/T1       -> 
-12  PD6			 -> 
-13  PD7			 -> 
+9   PB6/XTAL     <> XTAL
+10  PB7/XTAL     <> XTAL
+
+11  PD5/T1       -> LCD RS
+12  PD6			 -> LCD RW
+13  PD7			 -> LCD E
 14  PB0			 -> 
 ^v^v^v^v^v^v^v^v^v^v^v^v^v^v^v^v
-15  PB1			 ->
-16  PB2			 ->
-17  PB3			 ->
-18  PB4			 ->
-19  PB5			 ->
-20  AVCC		 ->
-21  AREF		 ->
-22  GND			 ->
-23  PC0			 ->
-24  PC1			 ->
-25  PC2			 -> LED
-26  PC3			 -> timer1
-27  PC4/SCL		 -> I2C SCL
-28  PC5/SDA		 -> I2C SDA
+15  PB1			 -> output heating lamp
+16  PB2			 -> output heating stone
+17  PB3			 -> output fogger
+18  PB4			 -> output lamp 2
+19  PB5			 -> output lamp 1
+
+20  AVCC		 na
+21  AREF		 na
+22  GND			 na
+
+23  PC0			 -> LCD_DB4
+24  PC1			 -> LCD_DB5
+25  PC2			 -> LCD_DB6
+26  PC3			 -> LCD_DB7
+
+27  PC4/SCL		 <> I2C SCL
+28  PC5/SDA		 <> I2C SDA
 
 
 I2C:

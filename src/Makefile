@@ -54,8 +54,8 @@ FORMAT = ihex
 TARGET = terrarium
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = main.c  uart.c time.c timeswitch.c portmap.c tmp101.c i2c.c ds1307.c commandline.c eeprom.c
-# tlv5620.c misc.c
+SRC = main.c  uart.c time.c timeswitch.c portmap.c tmp101.c i2c.c ds1307.c eeprom.c hd4478.c commandline.c selftest.c
+# tlv5620.c misc.c 
 
 # List Assembler source files here.
 # Make them always end in a capital .S.  Files ending in a lowercase .s
@@ -77,7 +77,9 @@ OPT = s
 # Native formats for AVR-GCC's -g are stabs [default], or dwarf-2.
 # AVR (extended) COFF requires stabs, plus an avr-objcopy run.
 #DEBUG = stabs
-DEBUG = stabs
+#DEBUG = stabs
+DEBUG =
+
 
 # List any extra directories to look for include files here.
 #     Each directory must be seperated by a space.
@@ -124,7 +126,8 @@ CFLAGS += -Werror
 #             for use in COFF files, additional information about filenames
 #             and function names needs to be present in the assembler source
 #             files -- see avr-libc docs [FIXME: not yet described there]
-ASFLAGS = -Wa,-adhlns=$(<:.S=.lst),-gstabs 
+ASFLAGS = -Wa,-adhlns=$(<:.S=.lst)
+#,-gstabs 
 ASFLAGS += -DF_OSC=$(F_OSC)
 
 
@@ -140,14 +143,17 @@ PRINTF_LIB =
 #$(PRINTF_LIB_FLOAT)
 
 # Minimalistic scanf version
-SCANF_LIB_MIN = -Wl,-u,vfscanf -lscanf_min
+SCANF_LIB_MIN =
+#= -Wl,-u,vfscanf -lscanf_min
 
 # Floating point + %[ scanf version (requires MATH_LIB = -lm below)
-SCANF_LIB_FLOAT = -Wl,-u,vfscanf -lscanf_flt
+SCANF_LIB_FLOAT =
+# -Wl,-u,vfscanf -lscanf_flt
 
 SCANF_LIB = 
 
-MATH_LIB = -lm
+MATH_LIB = 
+#-lm
 
 # External memory options
 
@@ -287,7 +293,7 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 
 
 # Default target.
-all: build sizeafter
+all: sizebefore build sizeafter
 
 build: elf hex eep lss sym
 
@@ -338,6 +344,7 @@ set_fuses: $(TARGET).hex $(TARGET).eep
 
 # Program the device.  
 program: $(TARGET).hex $(TARGET).eep
+	if [ ! -w /dev/parport0 ]; then sudo chmod uog+rw /dev/parport0; fi
 #	$(UISP) $(UISP_FLAGS) --rd_fuses	
 	$(UISP) $(UISP_FLAGS) --erase
 	$(UISP) $(UISP_FLAGS) $(UISP_WRITE)

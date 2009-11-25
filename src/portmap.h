@@ -9,11 +9,14 @@
 
 #pragma once
 
-
 #define PORTMAP_DEBUG
 
 enum {
   OUTPUT_L1,
+  OUTPUT_L2,
+  OUTPUT_FOGGER,
+  OUTPUT_HEATING_WIRE,
+  OUTPUT_HEATING_LAMP,
   OUTPUT_LAST
 };
 

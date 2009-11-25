@@ -39,8 +39,7 @@ void tmp101_init(uint8_t id) {
   LOG_INIT();
 
   // write configuration
-  i2c_c_write_start(TMP101_BASE_ADRESS + id);
-  i2c_c_write_next( TR_CONF );
+  i2c_c_write_start_reg(TMP101_BASE_ADRESS + id, TR_CONF);
   i2c_c_write_last( _BV(TC_R0) | _BV(TC_R1) );
 
   // select temperature register
@@ -50,8 +49,8 @@ void tmp101_init(uint8_t id) {
 }
 
 
-uint8_t tmp101_gettemp(uint8_t id) {
 
+uint8_t tmp101_gettemp(uint8_t id) {
   i2c_c_read_start(TMP101_BASE_ADRESS + id);
   return i2c_c_read_last();
 }

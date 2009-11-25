@@ -6,12 +6,10 @@
 
 
 #include <avr/interrupt.h>
-#include <stdio.h>
 
 #include "common.h"
 
 time_t volatile current_time;
-
 static uint8_t volatile newtime;
 
 

@@ -4,6 +4,7 @@ einstellungen mit der seriellen schnittstelle
 case insensitive
 
 
+======= command language
 
 Start := 
   Command '\r'
@@ -17,6 +18,7 @@ Command :=
 
 SetCommands := 
   "TIMER" Id TimerSetCommands
+  | "DAYTIME" Begin End
   | "TEMPSETPOINT"
   | "HUMIDITYSETPOINT"
   | "TIME" Time
@@ -25,6 +27,7 @@ SetCommands :=
 
 GetCommands :=
   "TIMERS"
+  | "DAYTIME"
   | "TEMP"
   | "TEMPSETPOINT"
   | "HUMIDITY"
@@ -40,8 +43,10 @@ TimerSetCommands :=
   | OFF
   ;
 
-
-Enabled := 0 | 1
+Begin  := Time
+End    := Time
+Active := 0 | 1        // is currently switched on
+Enabled := 0 | 1       // is considered to be switched
 ID    := numeral
 Start := Time
 End   := Time
@@ -49,4 +54,20 @@ Ouput := numeral [ 1..4 ]
 Time  := "hh:mm:ss"
 
 
+
+=== reply languge
+
+Start :=
+/* GET TIMERS: */ Start End Output Enabled Active Status
+/* GET TIME : */ Time Status
+  ;
+
+LineBreak := "\r\n"
+
+Status :=
+  LineBreak "OK" .*
+  | LineBreak "FAIL" .*
+
+
+optional text following, might indicate error cause
 
