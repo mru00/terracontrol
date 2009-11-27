@@ -13,7 +13,9 @@ drc:
 	gnetlist -g drc2 $(BASENAME).sch -o drc_output.txt
 
 clean:
-	-rm $(BASENAME).net $(BASENAME).old.pcb $(BASENAME).cmd gnetlist.log gschem.log drc_output.txt $(BASENAME).new.pcb
-	-rm *~
+	-rm -vf $(BASENAME).net $(BASENAME).old.pcb $(BASENAME).cmd gnetlist.log gschem.log drc_output.txt $(BASENAME).new.pcb
+	-rm -vf *~ *-
+	-rm -vf *.backup
+
 
 .PHONY: update drc clean
