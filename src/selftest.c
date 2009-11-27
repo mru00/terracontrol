@@ -14,6 +14,8 @@ void selftest_perform(void) {
   uint8_t i;
   char buf[4];
 
+  LOG_INIT();
+
 
   for ( i = 0; i < OUTPUT_LAST; i ++ ) {
 
@@ -35,5 +37,7 @@ void selftest_perform(void) {
   }
 
   hd4478_clear();
+
+  LOG_INIT_EXIT();
 }
 

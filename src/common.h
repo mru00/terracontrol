@@ -22,14 +22,16 @@ enum {
 
 typedef unsigned char bool;
 typedef uint32_t time_t;
+typedef uint32_t date_t;
 typedef uint8_t pin_t;
 typedef volatile uint8_t* port_t;
 
-extern volatile uint8_t temp;
-extern volatile uint8_t temp_setpoint[2];
-extern volatile uint8_t humidity;
-extern volatile uint8_t humidity_setpoint[2];
-extern volatile time_t daytime[2];
+extern uint8_t temp;
+extern uint8_t temp_setpoint[2];
+extern uint8_t humidity;
+extern uint8_t humidity_setpoint[2];
+extern time_t daytime[2];
+extern date_t wintertime[2];
 
 
 struct port_pin_t {
@@ -38,33 +40,16 @@ struct port_pin_t {
 };
 
 
-static inline uint8_t __attribute__((pure))
-is_digit (char d) {
-  return d >= '0' && d <= '9';
-}
 
-static inline uint8_t __attribute__((pure))
-is_number(char* s) {
-  do {
-	if ( !is_digit(*s) )  return 0;
-	s++;
-  } while ( *s != '\0');
-  return 1;
-}
-
-// itoa for uint8
-extern char* itoa8(uint8_t value, char* buf);
-
-// itoa for time parts (h, m or s)
-extern char* itoat(uint8_t value, char* buf);
-
-uint8_t __attribute__((pure)) atoi8(char* buf);
 
 #if 0
 #  define LOG_INIT()
+#  define LOG_INIT_EXIT()
 #else
-#  define LOG_INIT() uart_puts ( " init: " __FILE__ NEWLINE )
+#  define LOG_INIT() uart_puts ( "<" __FILE__  )
+#  define LOG_INIT_EXIT() uart_puts ( ">" NEWLINE )
 #endif
+
 
 #define NEWLINE "\r\n"
 
@@ -76,6 +61,7 @@ uint8_t __attribute__((pure)) atoi8(char* buf);
 #define nop() do { asm volatile("nop"); } while (0)
 
 // include everything from here for simplicity
+#include "itoa.h"
 #include "uart.h"
 #include "time.h"
 #include "i2c.h"
@@ -85,7 +71,8 @@ uint8_t __attribute__((pure)) atoi8(char* buf);
 #include "tmp101.h"
 #include "ds1307.h"
 #include "commandline.h"
-#include "eeprom.h"
 #include "version.h"
 #include "hd4478.h"
 #include "selftest.h"
+#include "eeprom.h"
+#include "sht11.h"

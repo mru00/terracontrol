@@ -9,13 +9,13 @@
 
 #include "common.h"
 
-time_t volatile current_time;
+date_t current_date;
+time_t current_time;
 static uint8_t volatile newtime;
 
 
 ISR(INT0_vect) {
   newtime++;
-  current_time = ds1307_gettime();
 }
 
 void time_init(void) {
@@ -28,14 +28,22 @@ void time_init(void) {
   GICR |= (1<< INT0);  //enable external interrupt 0
 
   newtime = 0;
+
+  LOG_INIT_EXIT();
 }
 
 
 bool time_updated(void) {
   if ( newtime  ) {
+
+	current_time = ds1307_gettime();
+	current_date = ds1307_getdate();
+
 	newtime --;
 	return 1;
   }
   return 0;
 }
+
+
 

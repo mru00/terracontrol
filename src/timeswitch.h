@@ -14,8 +14,7 @@ struct timeswitch_t {
   uint8_t output;   // sign bit is enabled flag!
 };
 
-#define N_TIMESWITCHES 4
-#define TIMESWITCH_STR_SIZE 2*TIME_STR_SIZE + 4 + 2 + 1
+#define N_TIMESWITCHES 8
 
 #define OUTPUT_ENABLED_MASK 0x80
 
@@ -28,11 +27,20 @@ extern struct timeswitch_t volatile timeswitches[N_TIMESWITCHES];
 // module initializer
 extern void timeswitch_init(void);
 
-// check all timeswitches, act accordingly
-extern void timeswitch_check(time_t now);
+// check all timeswitches
+// output_values is interpreted as a bitmask,
+// for every output it will contain a 
+//   1 if the output is enabled
+//   0 otherwise
+extern void timeswitch_check(const time_t now,
+							 uint8_t* output_values);
 
 // configure a timer
-extern void timeswitch_set(uint8_t id, time_t on, time_t off, uint8_t output, uint8_t enabled);
+extern void timeswitch_set(const uint8_t id, 
+						   const time_t on, 
+						   const time_t off, 
+						   const uint8_t output, 
+						   const uint8_t enabled);
 
 
 // ==== timer status functions:

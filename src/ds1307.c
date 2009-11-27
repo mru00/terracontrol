@@ -43,14 +43,14 @@ enum {
   DC_OUT    // output control
 };
 
-static inline uint8_t __attribute__((pure))
+static uint8_t __attribute__((pure))
 to_bcd(const uint8_t val) {
   uint8_t hi = (val / 10) & 0xf;
   uint8_t lo = (val - hi*10) & 0xf;
   return (hi<<4) + lo;
 }
 
-static inline uint8_t __attribute__((pure))
+static uint8_t __attribute__((pure))
 from_bcd(const uint8_t val) {
   return ( (val & 0xf0) >> 4 )*10 + (val & 0x0f);
 }
@@ -65,17 +65,24 @@ void ds1307_init(void) {
   t = i2c_c_read_last();
 
   // the clock was reset - reinitialize
+  // we check if the clock was reset by testing the CH bit of the
+  // time register
   if ( t & _BV(DC_CH) ) {
 	i2c_c_write_start_reg(DS1307_ADDRESS, DR_SECONDS);
 	i2c_c_write_next ( 0 ); // set CH to 0, start oscillator, set seconds to 0
 	i2c_c_write_next ( 0 ); // set minutes to 0
 	i2c_c_write_next ( 0 ); // set hours to 0
 	i2c_c_write_next ( 0 ); // set day to 0
-	i2c_c_write_next ( 0 ); // set date to 0
-	i2c_c_write_next ( 0 ); // set month to 0
-	i2c_c_write_next ( 0 ); // set year to 0
-	i2c_c_write_last ( _BV(DC_SQWE)  ); // set SquareWave enable, rate select = 0 -> 1Hz
+	i2c_c_write_next ( 1 ); // set date to 0
+	i2c_c_write_next ( 1 ); // set month to 0
+	i2c_c_write_next ( 9 ); // set year to 0
+	i2c_c_write_last ( (1<<DC_SQWE)| // SquareWave enable
+					   (0<<DC_RS0) | // rate select: 1Hz
+					   (0<<DC_RS1) |
+					   (0<<DC_OUT)); // normal output
   }
+
+  LOG_INIT_EXIT();
 }
 
 void ds1307_setdate(uint8_t y, uint8_t m, uint8_t d) {
@@ -105,4 +112,15 @@ time_t ds1307_gettime(void) {
   uint8_t h = from_bcd(i2c_c_read_last());
 
   return  time_from_hms(h, m, s);
+}
+
+date_t ds1307_getdate(void) {
+
+  i2c_c_read_start_reg(DS1307_ADDRESS, DR_DATE);
+
+  uint8_t d = from_bcd(i2c_c_read_next());
+  uint8_t m = from_bcd(i2c_c_read_next());
+  uint8_t y = from_bcd(i2c_c_read_last());
+
+  return  date_from_dmy(d, m, y);
 }

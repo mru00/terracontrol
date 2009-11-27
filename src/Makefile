@@ -54,7 +54,9 @@ FORMAT = ihex
 TARGET = terrarium
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = main.c  uart.c time.c timeswitch.c portmap.c tmp101.c i2c.c ds1307.c eeprom.c hd4478.c commandline.c selftest.c
+SRC = main.c  uart.c time.c timeswitch.c portmap.c tmp101.c \
+	i2c.c ds1307.c eeprom.c hd4478.c commandline.c selftest.c \
+	sht11.c itoa.c
 # tlv5620.c misc.c 
 
 # List Assembler source files here.
@@ -343,7 +345,7 @@ set_fuses: $(TARGET).hex $(TARGET).eep
 
 
 # Program the device.  
-program: $(TARGET).hex $(TARGET).eep
+program: $(TARGET).hex $(TARGET).eep sizeafter
 	if [ ! -w /dev/parport0 ]; then sudo chmod uog+rw /dev/parport0; fi
 #	$(UISP) $(UISP_FLAGS) --rd_fuses	
 	$(UISP) $(UISP_FLAGS) --erase

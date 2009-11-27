@@ -13,10 +13,6 @@
 #include <stdio.h>
 #include "common.h"
 
-// enable this define to utilize the LDAC line:
-
-//#define TLV_USE_LDAC
-
 
 struct tlv5620_port_t {
   struct port_pin_t load;
@@ -40,6 +36,8 @@ static inline void write_tlv(const uint8_t x) {
 
 void tlv_init(void) {
   LOG_INIT();
+  LOG_INIT_EXIT();
+
 }
 
 

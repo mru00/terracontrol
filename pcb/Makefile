@@ -14,5 +14,6 @@ drc:
 
 clean:
 	-rm $(BASENAME).net $(BASENAME).old.pcb $(BASENAME).cmd gnetlist.log gschem.log drc_output.txt $(BASENAME).new.pcb
+	-rm *~
 
 .PHONY: update drc clean

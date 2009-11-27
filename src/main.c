@@ -20,71 +20,14 @@
 #define TMP101_ID 1
 
 
-uint8_t volatile temp = 0;
-uint8_t volatile humidity;
-uint8_t volatile humidity_setpoint[2];
-uint8_t volatile temp_setpoint[2];
-time_t  volatile daytime[2];
+uint8_t temp = 0;
+uint8_t humidity;
+uint8_t humidity_setpoint[2];
+uint8_t temp_setpoint[2];
+time_t  daytime[2];
 
 
-
-char* itoa8(uint8_t value, char* buf) {
-
-  uint8_t h, t, o;
-  h = value / 100;
-  t = (value - 100*h) / 10;
-  o = (value - 100*h - 10*t);
-
-  if ( h != 0 ) {
-	buf[0] = '0' + h; 
-	buf[1] = '0' + t;
-	buf[2] = '0' + o;
-	buf[3] = '\0';
-  }
-  else if ( t != 0 ) {
-	buf[0] = '0' + t;
-	buf[1] = '0' + o;
-	buf[2] = '\0';
-  }
-  else {
-	buf[0] = '0' + o;
-	buf[1] = '\0';
-  }
-
-  return buf;
-}
-
-
-char* itoat(uint8_t value, char* buf) {
-
-  uint8_t t, o;
-  t = value / 10;
-  o = (value - 10*t);
-
-  buf[0] = '0' + t;
-  buf[1] = '0' + o;
-  buf[2] = '\0';
-
-  return buf;
-}
-
-uint8_t __attribute__((pure))
-atoi8(char* buf) {
-
-  uint8_t value;
-
-  value = 0;
-  while( is_digit(*buf) ) {
-	value *= 10;
-	value += *buf - '0';
-	buf++;
-  }
-
-  return value;
-}
-
-
-static inline void init_ports(void) {
+static void init_ports(void) {
   DDRD = 0xff;
   DDRB = 0xff;
   DDRC = 0xff;
@@ -97,16 +40,56 @@ uart_constructor(void) {
 }
 
 
-int main(void)
-{
-  unsigned int input;
+
+// called every second, perform output updates
+void update(void) {
+
+
   uint8_t heating_on = 0;
   uint8_t fogger_on = 0;
+  uint8_t output_values = 0;
+  uint8_t dt = time_is_daytime();
+  uint8_t heating_output;
+
 
   const uint8_t hyst_temp = 1;
   const uint8_t hyst_humidity = 5;
 
+
+  humidity = sht11_get_humidity();
+  temp = sht11_get_temperature();
+  
+  timeswitch_check(time_now(), &output_values);
+
+  if ( dt == DAY ) heating_output = OUTPUT_HEATING_LAMP;
+  else  heating_output = OUTPUT_HEATING_WIRE;
+
+  if ( temp < temp_setpoint[dt] ) heating_on = 1;
+  else if ( temp > temp_setpoint[dt] + hyst_temp) heating_on = 0;
+
+  if ( humidity < humidity_setpoint[dt] ) fogger_on = 1;
+  else if ( humidity > humidity_setpoint[dt] + hyst_humidity) fogger_on = 0;
+
+  // heating and fogger only when necessary
+  output_values |= heating_on << heating_output;
+  output_values |= fogger_on << OUTPUT_FOGGER;
+
+  // set all pins that were handled by the timers
+  for ( uint8_t j = OUTPUT_FIRST; j < OUTPUT_LAST; j++ )
+	portmap_setpin(output_values & _BV(j), j);
+
+}
+
+
+
+int main(void)
+{
+  unsigned int input;
+
   _delay_ms(100);
+
+
+  // init section -------------------------------------
 
   eeprom_init();
 
@@ -116,7 +99,6 @@ int main(void)
   init_ports();
   time_init();
 
-
   timeswitch_init();
 
   i2c_init();
@@ -124,45 +106,30 @@ int main(void)
   tmp101_init(TMP101_ID);
   commandline_init();
   hd4478_init();
+  sht11_init();
 
   selftest_perform();
 
+  // initialization complete.
 
   uart_puts(NEWLINE "TerraControl, mru 2009" NEWLINE NEWLINE);
 
+
+
+
+  // main loop section ----------------------------------
 
   for(;;) {
 
 	input = uart_getc();
 
-	if ( input != UART_NO_DATA ) {
+	if ( input != UART_NO_DATA ) 
 	  commandline_addchar(input & 0xff);
-	}
 
-	if ( time_updated() ) { 
-
-	  temp = tmp101_gettemp(TMP101_ID);
-	  timeswitch_check(time_now());
-
-	}
-
-	uint8_t dt = time_is_daytime();
-	uint8_t heating_output;
-
-	if ( dt == DAY ) heating_output = OUTPUT_HEATING_LAMP;
-	else  heating_output = OUTPUT_HEATING_WIRE;
-
-
-	if ( heating_on == 0 && temp < temp_setpoint[dt] ) heating_on = 1;
-	else if ( heating_on == 1 && temp > temp_setpoint[dt] + hyst_temp) heating_on = 0;
-
-	if ( fogger_on == 0 && humidity < humidity_setpoint[dt] ) fogger_on = 1;
-	else if ( fogger_on == 1 && humidity > humidity_setpoint[dt] + hyst_humidity) fogger_on = 0;
-
-	portmap_setpin(fogger_on, OUTPUT_FOGGER);
-	portmap_setpin(heating_on, heating_output);
-
+	if ( time_updated() ) 
+	  update();
   }
+
 }
 
 

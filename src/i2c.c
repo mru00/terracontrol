@@ -60,6 +60,7 @@ void i2c_init(void) {
   TWBR = 10;   // 
   TWSR &= ~3;  // TWPS=1 -> prescaler = 1
 
+  LOG_INIT_EXIT();
 }
 
 void i2c_start(void) {

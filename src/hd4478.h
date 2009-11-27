@@ -11,6 +11,11 @@
 
 #define HD4478_DUMMY
 
+#define HD4478_RS &PORTD,PD5
+#define HD4478_RW &PORTD, PD6
+#define HD4478_E  &PORTD, PD7
+#define HD4478_DB PORTC
+
 
 // public interface:
 

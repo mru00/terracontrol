@@ -10,11 +10,6 @@
 #include <util/delay.h>
 #include "common.h"
 
-#define HD4478_RS &PORTD,PD5
-#define HD4478_RW &PORTD, PD6
-#define HD4478_E  &PORTD, PD7
-#define HD4478_DB PORTC
-
 
 
 enum {
@@ -86,10 +81,8 @@ enum {
 
 
 // utility functions
-static inline uint8_t read_ir(void);
 
-
-static inline uint8_t is_busy(void) {
+static uint8_t is_busy(void) {
 
 #ifdef HD4478_DUMMY
   return 0;
@@ -99,7 +92,7 @@ static inline uint8_t is_busy(void) {
 }
 
 
-static inline void write_nibble ( uint8_t rs, uint8_t data) {
+static void write_nibble ( uint8_t rs, uint8_t data) {
 
   setpin2(HD4478_E);
 
@@ -125,12 +118,14 @@ static inline void write_nibble ( uint8_t rs, uint8_t data) {
 }
 
 
-static inline void write ( uint8_t rs, uint8_t data) {
+static void write ( uint8_t rs, uint8_t data) {
   write_nibble(rs, data >> 4);
   write_nibble(rs, data);
 }
 
-static inline uint8_t read ( uint8_t rs ) {
+
+/*
+static uint8_t read ( uint8_t rs ) {
 
   uint8_t data;
   setpin2(HD4478_E);
@@ -166,25 +161,7 @@ static inline uint8_t read ( uint8_t rs ) {
 
   return data;
 }
-
-
-static inline void write_ir(uint8_t value) {
-  while ( is_busy() );
-  write(0, value);
-}
-
-static inline uint8_t read_ir(void) {
-  return read(0);
-}
-
-static inline void write_dr(uint8_t value) {
-  while ( is_busy() );
-  write(1, value);
-}
-
-static inline uint8_t read_dr(void) {
-  return read(1);
-}
+*/
 
 // public interface:
 
@@ -261,6 +238,8 @@ void hd4478_init(void) {
 
   write(HD4478_REG_IR, 
 		(1<<HD4478_RETURNHOME) );
+
+  LOG_INIT_EXIT();
 }
 
 void hd4478_moveto(uint8_t r, uint8_t c) {

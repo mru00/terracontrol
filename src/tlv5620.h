@@ -7,6 +7,10 @@
  */
 
 
+// enable this define to utilize the LDAC line:
+
+//#define TLV_USE_LDAC
+
 
 // the DAC - id's
 enum {

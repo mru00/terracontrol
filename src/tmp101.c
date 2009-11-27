@@ -46,6 +46,8 @@ void tmp101_init(uint8_t id) {
 
   i2c_c_write_start(TMP101_BASE_ADRESS + id);
   i2c_c_write_last( TR_TEMP );
+
+  LOG_INIT_EXIT();
 }
 
 

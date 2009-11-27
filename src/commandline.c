@@ -28,7 +28,6 @@ static const char str_ok[] = "OK";
 static uint8_t parse_fail = 0;
 static uint8_t current_token = 0;
 
-#define COMMANDLINE_DEBUG
 
 #ifdef COMMANDLINE_DEBUG
 #  define checked(stmt)  stmt; if(parse_fail) return
@@ -45,8 +44,8 @@ static void processinput(void);
 void commandline_init(void) {
   LOG_INIT();
   current_pos = &current_line[0];
+  LOG_INIT_EXIT();
 }
-
 
 void commandline_addchar(char c) {
   if ( c == '\n' )      ; // ignore!
@@ -82,7 +81,7 @@ void processinput(void) {
 // begin terminal token parsers
 
 
-static inline char* parse_string(void) {
+static char* parse_string(void) {
   char* t = strtok_r(NULL, separator, &current_pos);
 
   current_token ++;
@@ -95,7 +94,7 @@ static inline char* parse_string(void) {
   return t;
 }
 
-static inline time_t parse_time(void) {
+static time_t parse_time(void) {
 
   char* time_pos;
   checked_r(char* token = parse_string(), 0);
@@ -118,9 +117,7 @@ static inline time_t parse_time(void) {
   uint8_t s = atoi8(ss);
 
 #ifdef COMMANDLINE_DEBUG
-  if ( h < 0 || h >= 24 || 
-	   m < 0 || m >= 60 ||
-	   s < 0 || s >= 60 ) {
+  if ( h >= 24 || m >= 60 || s >= 60 ) {
 	parse_fail = 1;
 	additional_text = PSTR(" invalid time format");
 	return 0;
@@ -129,6 +126,40 @@ static inline time_t parse_time(void) {
   
   return time_from_hms(h, m, s);
 }
+
+
+static date_t parse_date(void) {
+
+  char* date_pos;
+  checked_r(char* token = parse_string(), 0);
+
+  char* ds = strtok_r(token, ".", &date_pos);
+  char* ms = strtok_r(NULL, ".", &date_pos);
+  char* ys = strtok_r(NULL, ".", &date_pos);
+
+#ifdef COMMANDLINE_DEBUG
+  if ( !is_number(ds) || !is_number(ms) || !is_number(ys) ) {
+	parse_fail = 1;
+	additional_text = PSTR(" date must be in dd.mm.yy format!");
+	return 0;
+  }
+#endif
+
+  uint8_t d = atoi8(ds);
+  uint8_t m = atoi8(ms);
+  uint8_t y = atoi8(ys);
+
+#ifdef COMMANDLINE_DEBUG
+  if ( d > 31 || m > 12 || y > 99 ) {
+	parse_fail = 1;
+	additional_text = PSTR(" invalid date format");
+	return 0;
+  }
+#endif
+  
+  return date_from_dmy(d, m, y);
+}
+
 
 static uint8_t parse_int(void) {
   checked_r(char* token = parse_string(), 0);
@@ -150,6 +181,11 @@ static void parse_set_time(void) {
   ds1307_settime(time_get_h(t), time_get_m(t), time_get_s(t));
 }
 
+static void parse_set_date(void) {
+  checked(date_t t = parse_date());
+  ds1307_setdate(date_get_d(t), date_get_m(t), date_get_y(t));
+}
+
 static void parse_set_timer(void) {
 
   checked(uint8_t id = parse_int());
@@ -169,7 +205,7 @@ static void parse_set_timer(void) {
   timeswitch_set(id, on, off, output, enabled);
 }
 
-static inline void parse_set_tempsetpoint(void) {
+static void parse_set_tempsetpoint(void) {
   int t[2];
 
   checked(t[DAY] = parse_int());
@@ -181,7 +217,7 @@ static inline void parse_set_tempsetpoint(void) {
   }
 }
 
-static inline void parse_set_humiditysetpoint(void) {
+static void parse_set_humiditysetpoint(void) {
 
   int h[2];
 
@@ -194,14 +230,14 @@ static inline void parse_set_humiditysetpoint(void) {
   }
 }
 
-static inline void parse_set_output(void) {
+static void parse_set_output(void) {
   checked(uint8_t id = parse_int());
 
   id = 0;
   // set value
 }
 
-static inline void parse_set_daytime(void) {
+static void parse_set_daytime(void) {
   time_t t[2];
   checked(t[DAYTIME_BEGIN] = parse_time());
   checked(t[DAYTIME_END] = parse_time());
@@ -212,46 +248,44 @@ static inline void parse_set_daytime(void) {
   }
 }
 
-static inline void parse_get_timers(void) {
+static void parse_get_timers(void) {
   for ( uint8_t i = 0; i < N_TIMESWITCHES; i++ ) {
 	timeswitch_print(i);
 	uart_puts(NEWLINE);
   }
 }
 
-static inline void parse_get_outputs(void) {
-  uart_puts_P( "OUTPUT_L1" NEWLINE);
-  uart_puts_P( "OUTPUT_L2" NEWLINE);
-  uart_puts_P( "OUTPUT_FOGGER" NEWLINE);
-  uart_puts_P( "OUTPUT_HEATING_LAMP" NEWLINE);
-  uart_puts_P( "OUTPUT_HEATING_WIRE" NEWLINE);
+static void parse_get_time(void) {
+  time_print(time_now()); 
+  uart_puts(NEWLINE);
 }
 
-static inline void parse_get_daytime(void) {
+static void parse_get_date(void) {
+  date_print(date_now()); 
+  uart_puts(NEWLINE);
+}
+
+static void parse_get_outputs(void) {
+  for ( uint8_t i = OUTPUT_FIRST; i < OUTPUT_LAST; i ++ ) {
+	portmap_print_output(i);
+	uart_puts(NEWLINE);
+  }
+}
+
+static void parse_get_daytime(void) {
   time_daytime_print();
   uart_puts(NEWLINE);
 }
 
 
-static void parse_set(void) {
-  checked(char* token = parse_string());
 
-  if (TOKEN_IS("TIME"))                  parse_set_time();
-  else if (TOKEN_IS("DAYTIME"))          parse_set_daytime();
-  else if (TOKEN_IS("TIMER"))            parse_set_timer();
-  else if (TOKEN_IS("TEMPSETPOINT"))     parse_set_tempsetpoint();
-  else if (TOKEN_IS("HUMIDITYSETPOINT")) parse_set_humiditysetpoint();
-  else if (TOKEN_IS("OUTPUT"))           parse_set_output();
-  else  { parse_fail = 1; additional_text = PSTR(" UNKNOWN COMMAND"); }
-}
-
-static inline void parse_get_temp(void) {
+static void parse_get_temp(void) {
   char buf[4];
   uart_puts(itoa8(temp, buf));
   uart_puts(NEWLINE);
 }
 
-static inline void parse_get_tempsetpoint(void) {
+static void parse_get_tempsetpoint(void) {
   char buf[4];
   uart_puts(itoa8(temp_setpoint[DAY], buf));
   uart_puts(" ");
@@ -259,13 +293,13 @@ static inline void parse_get_tempsetpoint(void) {
   uart_puts(NEWLINE);
 }
 
-static inline void parse_get_humidity(void) {
+static void parse_get_humidity(void) {
   char buf[4];
   uart_puts(itoa8(humidity, buf));
   uart_puts(NEWLINE);
 }
 
-static inline void parse_get_humiditysetpoint(void) {
+static void parse_get_humiditysetpoint(void) {
   char buf[4];
   uart_puts(itoa8(humidity_setpoint[DAY], buf));
   uart_puts(" ");
@@ -274,10 +308,30 @@ static inline void parse_get_humiditysetpoint(void) {
 }
 
 
+
+
+// top level parsers:
+
+
+static void parse_set(void) {
+  checked(char* token = parse_string());
+
+  if (TOKEN_IS("TIME"))                  parse_set_time();
+  else if (TOKEN_IS("DATE"))             parse_set_date();
+  else if (TOKEN_IS("DAYTIME"))          parse_set_daytime();
+  else if (TOKEN_IS("TIMER"))            parse_set_timer();
+  else if (TOKEN_IS("TEMPSETPOINT"))     parse_set_tempsetpoint();
+  else if (TOKEN_IS("HUMIDITYSETPOINT")) parse_set_humiditysetpoint();
+  else if (TOKEN_IS("OUTPUT"))           parse_set_output();
+  else  { parse_fail = 1; additional_text = PSTR(" UNKNOWN COMMAND"); }
+}
+
+
 static void parse_get(void) {
   checked(char* token = parse_string());
 
-  if (TOKEN_IS("TIME"))                  { time_print(time_now()); uart_puts(NEWLINE); }
+  if (TOKEN_IS("TIME"))                  parse_get_time();
+  else if (TOKEN_IS("DATE"))             parse_get_date();
   else if (TOKEN_IS("DAYTIME"))          parse_get_daytime();
   else if (TOKEN_IS("TIMERS"))           parse_get_timers();
   else if (TOKEN_IS("TEMP"))             parse_get_temp();
@@ -288,6 +342,8 @@ static void parse_get(void) {
   else if (TOKEN_IS("VERSION"))          uart_puts("TerraControl " VERSION ", mru 2009" );
   else  { parse_fail = 1; additional_text = PSTR(" UNKNOWN COMMAND"); }
 }
+
+// parser start symbol
 
 void parse(void) {
 
@@ -302,11 +358,13 @@ void parse(void) {
   else if ( TOKEN_IS("SELFTEST")) selftest_perform();
   else                            { parse_fail = 1; additional_text = PSTR(" UNKNOWN COMMAND"); }
 
+#ifdef COMMANDLINE_DEBUG
   // string fully consumed?
   if ( *current_pos != '\0' )  {
 	parse_fail = 1;
 	additional_text = PSTR(" too much input");
   }
+#endif
 
   if ( parse_fail ) uart_puts(str_fail); 
   else uart_puts(str_ok);

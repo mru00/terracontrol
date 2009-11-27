@@ -13,8 +13,10 @@
 
 
 extern void ds1307_init(void);
-extern void ds1307_setdate(uint8_t y, uint8_t m, uint8_t d);
-extern void ds1307_settime(uint8_t h, uint8_t m, uint8_t s);
 
+extern void ds1307_setdate(const uint8_t y, const uint8_t m, const uint8_t d);
+extern date_t ds1307_getdate(void);
+
+extern void ds1307_settime(const uint8_t h, const uint8_t m, const uint8_t s);
 extern time_t ds1307_gettime(void);
 

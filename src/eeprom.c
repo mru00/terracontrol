@@ -7,7 +7,6 @@
 #include <avr/eeprom.h>
 #include <stdio.h>
 
-
 #include "common.h"
 
 #define VALID_MASK 0xA5
@@ -35,18 +34,37 @@ void eeprom_init(void) {
 	for ( int i = 0; i< 2; i ++ ) {
 	  daytime[i] = t[i];
 
-	  temp_setpoint[i] = 0;
+	  temp_setpoint[i] = 20;
 	  eeprom_write_byte(& ee_tempsetpoint[i], temp_setpoint[i]);
 	
-	  humidity_setpoint[i] = 0;
+	  humidity_setpoint[i] = 30;
 	  eeprom_write_byte(& ee_humiditysetpoint[i], humidity_setpoint[i]);
 
 	  eeprom_write_block( (const void*) &daytime[i], &ee_daytime[i], sizeof(time_t));
 	}
 
-	for ( i = 0; i < N_TIMESWITCHES; i++ ) {
+	
+	timeswitch_set(0, 
+				   time_from_hms(11, 0, 0), 
+				   time_from_hms(13, 0, 0), 
+				   OUTPUT_L1, 
+				   1);
+
+	timeswitch_set(1, 
+				   time_from_hms(10, 0, 0), 
+				   time_from_hms(14, 0, 0), 
+				   OUTPUT_L2, 
+				   1);
+
+	timeswitch_set(2, 
+				   time_from_hms(10, 0, 0), 
+				   time_from_hms(14, 0, 0), 
+				   OUTPUT_HEATING_LAMP, 
+				   1);
+
+	for ( i = 3; i < N_TIMESWITCHES; i++ )
 	  timeswitch_set(i, 0, 0, 0, 0);
-	}
+
 
 	eeprom_write_byte(&ee_valid_configuration, VALID_MASK);
 
@@ -62,4 +80,6 @@ void eeprom_init(void) {
   for ( i = 0; i < N_TIMESWITCHES; i++ ) {
 	eeprom_read_block( (void*) &timeswitches[i], &ee_timeswitches[i], sizeof(struct timeswitch_t) );
   }
+
+  LOG_INIT_EXIT();
 }
