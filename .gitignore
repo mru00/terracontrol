@@ -1,0 +1,9 @@
+*.o
+*.lst
+*terrarium.lss
+*terrarium.map
+*terrarium.sym
+TAGS
+.dep
+*~
+*#
