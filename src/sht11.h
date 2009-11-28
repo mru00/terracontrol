@@ -2,7 +2,7 @@
  * terrarium control
  * mru, november 2009
  *
- * sensirion sht1x humidity/temperature sensor
+ * sensirion shtxx humidity/temperature sensor
  */
 
 

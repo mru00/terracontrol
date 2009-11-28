@@ -20,6 +20,8 @@
 #define TMP101_BASE_ADRESS 0x48
 
 extern void tmp101_init(uint8_t id);
+
+// returns the temperatur, in deg Celcius
 extern uint8_t tmp101_gettemp(uint8_t id);
 
 

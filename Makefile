@@ -4,6 +4,13 @@ DEV_SER = /dev/ttyS0
 DEV_PAR = /dev/parport0
 
 
+VERSION = $(shell sed 's/#define VERSION "\(.*\)"/\1/p; d' src/version.h )
+
+
+get_version:
+	@echo $(shell sed 's/#define VERSION "\(.*\)"/\1/p; d' src/version.h)
+	echo $(VERSION)
+
 build:
 	@$(MAKE) -C src build
 

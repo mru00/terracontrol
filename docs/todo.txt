@@ -1,0 +1,20 @@
+
+
+
+ * winter time 
+
+ * realy-mru-1.sym!!! mit ins archive
+
+
+==== GUI
+
+ * selftest button
+ * error handling
+ * controller title
+ * file persistance
+ * better mono conformance
+
+==== controller
+
+ * controller title
+
