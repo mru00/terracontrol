@@ -12,6 +12,7 @@
 extern uint8_t ee_tempsetpoint[2] EEMEM;
 extern uint8_t ee_humiditysetpoint[2] EEMEM;
 extern time_t ee_daytime[2] EEMEM;
+extern char ee_controller_title[CONTROLER_TITLE_LEN] EEMEM;
 
 extern struct timeswitch_t ee_timeswitches[N_TIMESWITCHES] EEMEM;
 

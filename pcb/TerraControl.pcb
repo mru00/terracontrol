@@ -1,5 +1,5 @@
 # release: pcb 20081128
-# date:    Fri Nov 27 15:39:37 2009
+# date:    Fri Nov 27 23:23:37 2009
 # user:    mru ()
 # host:    knuth.olymp
 
@@ -1160,12 +1160,28 @@ Element["" "rel_finder_40_31" "Relay4" "unknown" 400000 290000 8000 10000 0 100 
 	ElementLine [-9000 -9000 99000 -10000 1000]
 
 	)
+
+Element["" "JUMPER4" "CONN_SHT" "unknown" 200000 220000 11000 -5000 3 100 ""]
+(
+	Pin[0 0 6000 3000 6600 3800 "1" "1" "square"]
+	Pin[0 10000 6000 3000 6600 3800 "2" "2" ""]
+	Pin[0 20000 6000 3000 6600 3800 "3" "3" ""]
+	Pin[0 30000 6000 3000 6600 3800 "4" "4" ""]
+	ElementLine [5000 5000 5000 -5000 1000]
+	ElementLine [-5000 5000 5000 5000 1000]
+	ElementLine [5000 -5000 -5000 -5000 1000]
+	ElementLine [5000 35000 5000 -5000 1000]
+	ElementLine [-5000 35000 5000 35000 1000]
+	ElementLine [-5000 -5000 -5000 35000 1000]
+
+	)
 Rat[400600 100000 0 475000 140000 0  ""]
 Rat[475000 140000 0 475000 190000 0  ""]
 Rat[475000 190000 0 475000 240000 0  ""]
 Rat[475000 240000 0 475000 290000 0  ""]
 Rat[475000 290000 0 475000 340000 0  ""]
 Rat[170000 260000 0 170000 240000 0  ""]
+Rat[190000 260000 0 200000 240000 0  ""]
 Rat[230000 260000 0 260000 250000 0  ""]
 Rat[170000 260000 0 160000 290000 0  ""]
 Rat[160000 290000 0 160000 300000 0  ""]
@@ -1184,7 +1200,10 @@ Rat[260000 300000 0 150000 280000 0  ""]
 Rat[230000 190000 0 150000 300000 0  ""]
 Rat[260000 280000 0 300000 280000 0  ""]
 Rat[260000 280000 0 150000 310000 0  ""]
+Rat[230000 230000 0 200000 250000 0  ""]
+Rat[230000 240000 0 200000 220000 0  ""]
 Rat[320000 170000 0 300000 180000 0  ""]
+Rat[210000 250000 0 200000 230000 0  ""]
 Rat[210000 250000 0 160000 280000 0  ""]
 Rat[230000 270000 0 190000 270000 0  ""]
 Layer(1 "solder")
@@ -1334,6 +1353,7 @@ NetList()
 		Connect("CONN_ISP-8")
 		Connect("CONN_ISP-10")
 		Connect("CONN_LCD-1")
+		Connect("CONN_SHT-3")
 		Connect("DS1307-4")
 		Connect("LO_P_CONN-1")
 		Connect("MAX232-15")
@@ -1444,6 +1464,17 @@ NetList()
 		Connect("ATMEGA-27")
 		Connect("DS1307-5")
 	)
+	Net("SHT_DATA" "(unknown)")
+	(
+		Connect("ATMEGA-5")
+		Connect("CONN_SHT-4")
+		Connect("R1-1")
+	)
+	Net("SHT_SCK" "(unknown)")
+	(
+		Connect("ATMEGA-6")
+		Connect("CONN_SHT-1")
+	)
 	Net("TxD" "(unknown)")
 	(
 		Connect("MAX232-14")
@@ -1518,9 +1549,11 @@ NetList()
 		Connect("ATMEGA-7")
 		Connect("CONN_ISP-2")
 		Connect("CONN_LCD-2")
+		Connect("CONN_SHT-2")
 		Connect("DS1307-8")
 		Connect("LO_P_CONN-2")
 		Connect("MAX232-16")
+		Connect("R1-2")
 		Connect("R_CONTRAST-1")
 	)
 	Net("Vo" "(unknown)")

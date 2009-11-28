@@ -20,6 +20,9 @@ enum {
   DAYTIME_END
 };
 
+
+#define CONTROLER_TITLE_LEN 20
+
 typedef unsigned char bool;
 typedef uint32_t time_t;
 typedef uint32_t date_t;
