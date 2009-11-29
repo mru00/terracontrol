@@ -4,7 +4,7 @@ BASENAME=TerraControl
 
 ELEMENTS = ./packages
 
-VERBOSITY = -v
+VERBOSITY = 
 
 update:
 	gsch2pcb -f  -d $(ELEMENTS) $(BASENAME).sch $(VERBOSITY)

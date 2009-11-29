@@ -4,22 +4,21 @@ DEV_SER = /dev/ttyS0
 DEV_PAR = /dev/parport0
 
 
-VERSION = $(shell sed 's/#define VERSION "\(.*\)"/\1/p; d' src/version.h )
+VERSION := $(shell sed -e 's/\#define VERSION "\(.*\)"/\1/p;d' src/version.h )
 
 ARCH_FILES = \
 		src/main.c src/commandline.c src/ds1307.c src/eeprom.c src/hd4478.c src/i2c.c \
-		src/itoa.c src/main.c src/misc.c src/portmap.c src/selftest.c src/sht11.c \
+		src/itoa.c src/main.c src/portmap.c src/selftest.c src/sht11.c \
 		src/time.c src/time_noRTC.c src/timeswitch.c src/tlv5620.c src/tmp101.c \
 		src/uart.c \
 		src/commandline.h src/common.h src/ds1307.h src/eeprom.h src/hd4478.h src/i2c.h \
-		src/itoa.h src/misc.h src/portmap.h src/selftest.h src/sht11.h src/time.h \
+		src/itoa.h src/portmap.h src/selftest.h src/sht11.h src/time.h \
 		src/timeswitch.h src/tlv5620.h src/tmp101.h src/uart.h src/version.h \
 		Makefile src/TerraControl/Makefile src/Makefile pcb/Makefile \
 		pcb/TerraControl.sch pcb/TerraControl.pcb pcb/packages/rel_finder_40_31 pcb/packages/relay-mru-1.sym
 
 get_version:
-	@echo $(shell sed 's/#define VERSION "\(.*\)"/\1/p; d' src/version.h)
-	echo $(VERSION)
+	@echo $(VERSION)
 
 build:
 	@$(MAKE) -C src build
@@ -36,7 +35,7 @@ clean:
 	@$(MAKE) -C pcb clean
 
 arch:
-	@tar czf TerraControl.tar.gz $(ARCH_FILES)
+	@tar czf TerraControl-$(VERSION).tar.gz $(ARCH_FILES)
 
 
 startgeda:

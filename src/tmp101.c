@@ -51,7 +51,6 @@ void tmp101_init(uint8_t id) {
 }
 
 
-
 uint8_t tmp101_gettemp(uint8_t id) {
   i2c_c_read_start(TMP101_BASE_ADRESS + id);
   return i2c_c_read_last();
