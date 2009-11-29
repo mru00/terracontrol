@@ -17,5 +17,8 @@ clean:
 	-rm -vf *~ *-
 	-rm -vf *.backup
 
+startgeda:
+	-gschem $(BASENAME).sch &
+	-pcb $(BASENAME).pcb &
 
-.PHONY: update drc clean
+.PHONY: update drc clean startgeda
