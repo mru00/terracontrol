@@ -11,6 +11,8 @@
 #include "common.h"
 
 
+static uint8_t is_busy(void);
+
 
 enum {
   HD4478_REG_IR,
@@ -32,7 +34,7 @@ enum {
 };
 
 enum {
-  HD4478_DISPLAY_B,         // B .. blining
+  HD4478_DISPLAY_B,         // B .. blinking
   HD4478_DISPLAY_C,         // C .. cursor
   HD4478_DISPLAY_D,         // D .. display on /off
   HD4478_DISPLAY
@@ -82,34 +84,26 @@ enum {
 
 // utility functions
 
-static uint8_t is_busy(void) {
-
-#ifdef HD4478_DUMMY
-  return 0;
-#else
-  return (read_ir() & _BV(HD4478_BUSY_FLAG)) != 0;
-#endif
-}
 
 
 static void write_nibble ( uint8_t rs, uint8_t data) {
 
-  setpin2(HD4478_E);
 
-  nop();  nop();
+  // configure as output
+  HD4478_DB_C |= 0x0f;
+  HD4478_DB_W &= 0xf0;
 
   clearpin2(HD4478_RW);
   xpin2(rs, HD4478_RS);
-
-  // clear low-nibble of HD4478_DB
-  HD4478_DB &= 0xf0;
-  HD4478_DB |= data & 0x0f;
-
   nop();  nop();
 
-  clearpin2(HD4478_E);
+  setpin2(HD4478_E);
 
-  //_delay_ms(1);
+  nop();  nop();
+  // clear low-nibble of HD4478_DB
+  HD4478_DB_W |= data & 0x0f;
+  nop();  nop();
+  clearpin2(HD4478_E);
   nop(); nop();
 
   setpin2(HD4478_E);
@@ -120,48 +114,51 @@ static void write_nibble ( uint8_t rs, uint8_t data) {
 
 static void write ( uint8_t rs, uint8_t data) {
   write_nibble(rs, data >> 4);
+  nop(); nop();
+
   write_nibble(rs, data);
+  nop(); nop();
+  while (is_busy());
 }
 
 
-/*
-static uint8_t read ( uint8_t rs ) {
+static uint8_t read_nibble ( uint8_t rs ) {
 
-  uint8_t data;
-  setpin2(HD4478_E);
+  uint8_t data = 0;
 
-  nop();  nop();
+
+  // disable pull-ups
+  HD4478_DB_W |= 0x0f;
+  // configure as input
+  HD4478_DB_C &= 0xf0;
 
   setpin2(HD4478_RW);
   xpin2(rs, HD4478_RS);
-
-  data = HD4478_DB & 0x0f;
-
-  nop();  nop();
-
-  clearpin2(HD4478_E);
-
-  //_delay_ms(1);
   nop(); nop();
-
   setpin2(HD4478_E);
-
   nop();  nop();
-
-  clearpin2(HD4478_RW);
-  xpin2(rs, HD4478_RS);
-
-  data |= (HD4478_DB & 0x0f) << 4;
-
+  data = HD4478_DB_R & 0x0f;
   nop();  nop();
-
   clearpin2(HD4478_E);
 
   nop(); nop();
 
   return data;
 }
-*/
+
+static uint8_t read ( uint8_t rs ) {
+  return read_nibble(rs) << 4 | read_nibble(rs);
+}
+
+static uint8_t is_busy(void) {
+
+#ifdef HD4478_DUMMY
+  return 0;
+#else
+  return (read(HD4478_REG_IR) & _BV(HD4478_BUSY_FLAG)) != 0;
+#endif
+}
+
 
 // public interface:
 
@@ -176,7 +173,7 @@ void hd4478_init(void) {
 				(0<<HD4478_FUNCTIONSET_F) |
 				(1<<HD4478_FUNCTIONSET_DL)) >> 4);
 			   
-  //_delay_ms(5);
+  _delay_ms(5);
   
   // function set (8 bit interface), #2
   write_nibble(HD4478_REG_IR, 
@@ -185,7 +182,7 @@ void hd4478_init(void) {
 				(0<<HD4478_FUNCTIONSET_F) |
 				(1<<HD4478_FUNCTIONSET_DL)) >> 4);
 			   
-  //_delay_ms(1);
+  _delay_ms(1);
 			   
   // function set (8 bit interface), #3
   write_nibble(HD4478_REG_IR, 
@@ -195,7 +192,7 @@ void hd4478_init(void) {
 				(1<<HD4478_FUNCTIONSET_DL)) >> 4 );
 
 			   
-  //_delay_ms(1);
+  _delay_ms(1);
 
   // function set (4 bit interface)
   write_nibble(HD4478_REG_IR, 
@@ -213,7 +210,6 @@ void hd4478_init(void) {
 		(0<<HD4478_FUNCTIONSET_DL));
   
   
-  while (is_busy());
 
   write(HD4478_REG_IR, 
 		(1<<HD4478_DISPLAY) | 
@@ -221,20 +217,14 @@ void hd4478_init(void) {
 		(0<<HD4478_DISPLAY_C) |
 		(0<<HD4478_DISPLAY_B) );
 
-  while (is_busy());
-
   // clear display
   write(HD4478_REG_IR, 
 		(1<<HD4478_CLEARDISPLAY) );
-
-  while (is_busy());
 
   write(HD4478_REG_IR, 
 		(1<<HD4478_ENTRYMODE) | 
 		(1<<HD4478_ENTRYMODE_ID) | 
 		(0<<HD4478_ENTRYMODE_S) );
-
-  while (is_busy());
 
   write(HD4478_REG_IR, 
 		(1<<HD4478_RETURNHOME) );
@@ -242,7 +232,7 @@ void hd4478_init(void) {
   LOG_INIT_EXIT();
 }
 
-void hd4478_moveto(uint8_t r, uint8_t c) {
+void hd4478_moveto(const uint8_t r, const uint8_t c) {
   uint8_t adr = 0x40 * r + c;
   // write the address to the DDRAM
   write(HD4478_REG_IR,
@@ -251,14 +241,18 @@ void hd4478_moveto(uint8_t r, uint8_t c) {
 }
 
 
-void hd4478_putc(char character) {
+void hd4478_putc(const char character) {
   // write a character to current position
   write(HD4478_REG_DATA,
-		(1<<HD4478_SETCGRAM) |
-		(character & 0x3f));
+		//_BV(HD4478_SETCGRAM)) |
+		(character & 0x7f));
+
+  // something went wrong here. i tried to adhere to the documentation
+  // of the hd4478, but the _BV... hinders the display of
+  // number. anyways, this way it seems to work.
 }
 
-void hd4478_puts(char* string) {
+void hd4478_puts(const char* string) {
   while (*string != '\0') 
 	hd4478_putc(*string ++);
 }
@@ -267,4 +261,6 @@ void hd4478_clear(void) {
   // clear display
   write(HD4478_REG_IR, 
 		(1<<HD4478_CLEARDISPLAY) );
+
+  hd4478_moveto(0, 0);
 }

@@ -1,0 +1,21 @@
+
+# mru, november 2009
+# simple relais
+
+# Element(flags description pcb-name value mark_x mark_y text_x text_y text_direction text_scale text_flags)
+# Pin(x y Thickness Clearance Mask DrillHole Name Number Flags)
+
+
+Element(0x00 "relay zettler 6961" "R0" "" 10 10 80 100 0 100 0x00)
+(
+		Pin(0 0 60 30 90 28 "C1" "1" 0x00000101)
+		Pin(0 298 60 30 90 28 "C2" "2" 0x00000001)
+		Pin(744 298 60 30 90 28 "S1" "3" 0x00000001)
+		Pin(942 0 60 30 90 28 "S2" "4" 0x00000001)
+
+		ElementLine(-62 -50 1058 -50 10)
+		ElementLine(-62 348 1058 348 10)
+		ElementLine(-62 -50 -62 348 10)
+		ElementLine(1058 -50 1058 348 10)
+)
+

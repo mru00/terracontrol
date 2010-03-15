@@ -1,0 +1,5 @@
+
+;                      -*- Scheme -*-
+
+;; add the 
+(component-library "./packages") 

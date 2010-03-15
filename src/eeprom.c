@@ -6,6 +6,7 @@
 
 #include <avr/eeprom.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "common.h"
 
@@ -16,6 +17,7 @@ uint8_t ee_valid_configuration EEMEM;
 time_t ee_daytime[2] EEMEM;
 uint8_t ee_tempsetpoint[2] EEMEM;
 uint8_t ee_humiditysetpoint[2] EEMEM;
+char ee_controller_title[CONTROLER_TITLE_LEN] EEMEM;
 
 struct timeswitch_t ee_timeswitches[N_TIMESWITCHES] EEMEM;
 
@@ -63,13 +65,24 @@ void eeprom_init(void) {
 				   1);
 
 	for ( i = 3; i < N_TIMESWITCHES; i++ )
-	  timeswitch_set(i, 0, 0, 0, 0);
+	  timeswitch_set(i, time_from_hms(0,0,0), time_from_hms(0,0,0), 0, 0);
 
 
 	eeprom_write_byte(&ee_valid_configuration, VALID_MASK);
 
+
+	strncpy((char*)controller_title, "NONAME", CONTROLER_TITLE_LEN);
+	eeprom_write_block ((const void *)controller_title, 
+						(void *) ee_controller_title, 
+						CONTROLER_TITLE_LEN);
+
 	return;
   }
+
+  
+  eeprom_read_block ((void *)controller_title, 
+					 (const void *) ee_controller_title, 
+					 CONTROLER_TITLE_LEN);
   
   for (int i = 0; i < 2; i++ ) {
 	temp_setpoint[i] = eeprom_read_byte(&ee_tempsetpoint[i]);

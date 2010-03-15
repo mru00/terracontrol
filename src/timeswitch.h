@@ -32,8 +32,7 @@ extern void timeswitch_init(void);
 // for every output it will contain a 
 //   1 if the output is enabled
 //   0 otherwise
-extern void timeswitch_check(const time_t now,
-							 uint8_t* output_values);
+extern void timeswitch_check(void);
 
 // configure a timer
 extern void timeswitch_set(const uint8_t id, 
@@ -65,16 +64,16 @@ timeswitch_active(const uint8_t id)   {
 
 inline void  timeswitch_print(uint8_t id) {
   
-  char buf[4];
+  char buf[9];
 
-  time_print(timeswitches[id].on);
-  uart_putc(' ');
-  time_print(timeswitches[id].off);
-  uart_putc(' ');
+  uart_puts(ttoa(timeswitches[id].on, buf));
+  uart_puts(" ");
+  uart_puts(ttoa(timeswitches[id].off, buf));
+  uart_puts(" ");
   uart_puts(itoa8(timeswitches[id].output & ~OUTPUT_ENABLED_MASK, buf));
-  uart_putc(' ');
+  uart_puts(" ");
   uart_puts(itoa8(timeswitch_enabled(id), buf));
-  uart_putc(' ');
+  uart_puts(" ");
   uart_puts(itoa8(timeswitch_active(id), buf));
 }
 

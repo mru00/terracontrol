@@ -1,0 +1,25 @@
+**** README
+
+
+terracontrol.
+
+
+an embedded terrarium controller for atmel mcu's
+
+with gui implemented in C# 2.0
+
+
+
+*** issues
+
+* stuerzt nach ein paar stunden ab
+
+es ist nicht:
+ * INT0 waehrend serial communication
+
+
+es koennte sein:
+ * GET TEMP  (derzeit ein log der darauf hinweisst)
+
+
+-> es muss ein watchdog her!

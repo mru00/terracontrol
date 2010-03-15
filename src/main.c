@@ -8,23 +8,20 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <avr/pgmspace.h>
-#include <avr/wdt.h>
 #include <util/delay.h>
-
 
 #include "common.h"
 
-
 #define UART_BAUD_RATE     38400
 #define TMP101_ID 1
-
 
 uint8_t temp = 0;
 uint8_t humidity;
 uint8_t humidity_setpoint[2];
 uint8_t temp_setpoint[2];
 time_t  daytime[2];
+char* controller_title[CONTROLER_TITLE_LEN];
+uint8_t output_values = 0;
 
 
 static void init_ports(void) {
@@ -40,26 +37,28 @@ uart_constructor(void) {
 }
 
 
-
 // called every second, perform output updates
 void update(void) {
 
-
   uint8_t heating_on = 0;
   uint8_t fogger_on = 0;
-  uint8_t output_values = 0;
   uint8_t dt = time_is_daytime();
   uint8_t heating_output;
 
-
   const uint8_t hyst_temp = 1;
   const uint8_t hyst_humidity = 5;
+
+  char buf[9];
+
+  static uint8_t counter = 0;
+  static uint8_t page = 0;
 
 
   humidity = sht11_get_humidity();
   temp = sht11_get_temperature();
   
-  timeswitch_check(time_now(), &output_values);
+  // resets the output_values, so this must be the first here
+  timeswitch_check();
 
   if ( dt == DAY ) heating_output = OUTPUT_HEATING_LAMP;
   else  heating_output = OUTPUT_HEATING_WIRE;
@@ -74,9 +73,34 @@ void update(void) {
   output_values |= heating_on << heating_output;
   output_values |= fogger_on << OUTPUT_FOGGER;
 
-  // set all pins that were handled by the timers
-  for ( uint8_t j = OUTPUT_FIRST; j < OUTPUT_LAST; j++ )
-	portmap_setpin(output_values & _BV(j), j);
+  pcf8574a_set(output_values);
+
+  hd4478_clear();
+
+  hd4478_puts(itoa8(temp, buf));
+  hd4478_puts("` ");
+
+  hd4478_puts(itoa8(humidity, buf));
+  hd4478_puts("%");
+
+  hd4478_moveto(1, 0);
+
+  switch(page) {
+  case 0:
+	hd4478_puts(ttoa(time_now(), buf));
+	if ( counter++ == 3 ) {
+	  page = 1;
+	  counter = 0;
+	}
+	break;
+  case 1:
+	hd4478_puts(controller_title);
+	if ( counter++ == 3 ) {
+	  page = 0;
+	  counter = 0;
+	}
+	break;
+  }
 
 }
 
@@ -87,7 +111,6 @@ int main(void)
   unsigned int input;
 
   _delay_ms(100);
-
 
   // init section -------------------------------------
 
@@ -107,15 +130,12 @@ int main(void)
   commandline_init();
   hd4478_init();
   sht11_init();
+  pcf8574a_init();
+
+  hd4478_moveto(0, 0);
+  hd4478_puts("Starting");
 
   selftest_perform();
-
-  // initialization complete.
-
-  uart_puts(NEWLINE "TerraControl, mru 2009" NEWLINE NEWLINE);
-
-
-
 
   // main loop section ----------------------------------
 

@@ -18,6 +18,7 @@
 extern time_t current_time;
 extern date_t current_date;
 
+typedef void (*t_puts)(const char*);
 
 /*
  * init the time module;
@@ -37,66 +38,43 @@ time_now(void) {
   return current_time;
 }
 
-inline uint8_t const __attribute__((pure))
-time_in_range(const time_t begin, const time_t end) {
-  time_t now = time_now();
-  if ( begin < end )
-	return now >= begin && now <= end;
-
-  return now >= begin  || now <= end;
+inline date_t const __attribute__((pure)) 
+date_now(void) {
+  return current_date;
 }
+
+extern uint8_t time_in_range(const time_t begin, const time_t end);
 
 inline uint8_t const __attribute__((pure))
 time_is_daytime(void) {
   return time_in_range(daytime[DAYTIME_BEGIN], daytime[DAYTIME_END]);
 }
 
-inline uint8_t time_get_s(const time_t t) { return t & 0xff; }
-inline uint8_t time_get_m(const time_t t) { return (t>>8) & 0xff; }
-inline uint8_t time_get_h(const time_t t) { return (t>>16) & 0xff; }
+inline uint8_t const __attribute__((pure)) time_get_s(const time_t t) { return t & 0xff; }
+inline uint8_t const __attribute__((pure)) time_get_m(const time_t t) { return (t>>8) & 0xff; }
+inline uint8_t const __attribute__((pure)) time_get_h(const time_t t) { return (t>>16) & 0xff; }
 
-inline void time_print(time_t time) {
-  char buf[4];
-  uart_puts(itoat(time_get_h(time), buf));
-  uart_putc(':');
-  uart_puts(itoat(time_get_m(time), buf));
-  uart_putc(':');
-  uart_puts(itoat(time_get_s(time), buf));
-}
+extern char* ttoa(const time_t time, char* buf);
+extern void date_print(const date_t date);
 
-inline void time_daytime_print(void) {
-  time_print(daytime[DAYTIME_BEGIN]);
-  uart_putc(' ');
-  time_print(daytime[DAYTIME_END]);
-}
 
 // h, m, s must be in decimal!
-inline time_t time_from_hms(const uint32_t h, const uint32_t m, const uint32_t s) {
-  return (h << 16) + (m << 8) + (s);
+inline time_t const __attribute__((pure)) 
+time_from_hms(const uint8_t h, const uint8_t m, const uint8_t s) {
+  return ((uint32_t)h << 16) + ((uint32_t)m << 8) + ((uint32_t)s);
 }
 
+inline uint8_t const __attribute__((pure)) 
+date_get_y(const date_t t) { return t & 0xff; }
 
+inline uint8_t const __attribute__((pure)) 
+date_get_m(const date_t t) { return (t>>8) & 0xff; }
 
-
-inline uint8_t date_get_y(const date_t t) { return t & 0xff; }
-inline uint8_t date_get_m(const date_t t) { return (t>>8) & 0xff; }
-inline uint8_t date_get_d(const date_t t) { return (t>>16) & 0xff; }
-
-
-inline void date_print(date_t date) {
-  char buf[4];
-  uart_puts(itoat(date_get_d(date), buf));
-  uart_putc('.');
-  uart_puts(itoat(date_get_m(date), buf));
-  uart_putc('.');
-  uart_puts(itoat(date_get_y(date), buf));
-}
-
-inline date_t date_now(void) {
-  return current_date;
-}
+inline uint8_t const __attribute__((pure)) 
+date_get_d(const date_t t) { return (t>>16) & 0xff; }
 
 // d, m, y must be in decimal!
-inline date_t date_from_dmy(const uint32_t d, const uint32_t m, const uint32_t y) {
+inline date_t const __attribute__((pure)) 
+date_from_dmy(const uint32_t d, const uint32_t m, const uint32_t y) {
   return (d << 16) + (m << 8) + (y);
 }

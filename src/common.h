@@ -20,21 +20,47 @@ enum {
   DAYTIME_END
 };
 
+enum {
+  OUTPUT_FIRST,
+  OUTPUT_L1 = OUTPUT_FIRST,
+  OUTPUT_L2,
+  OUTPUT_FOGGER,
+  OUTPUT_HEATING_WIRE,
+  OUTPUT_HEATING_LAMP,
+  OUTPUT_LAST
+};
 
-#define CONTROLER_TITLE_LEN 20
+
+// maximum length of controller title
+#define CONTROLER_TITLE_LEN 9
+
+// some debug statements
+//#define INIT_DEBUG
+//#define COMMANDLINE_DEBUG
+//#define PORTMAP_DEBUG
+
+
 
 typedef unsigned char bool;
 typedef uint32_t time_t;
 typedef uint32_t date_t;
-typedef uint8_t pin_t;
+typedef uint8_t  pin_t;
 typedef volatile uint8_t* port_t;
 
+
+// these variables constitute the status and the setup of the
+// controller. some are also persisted into eeprom, see
+// eeprom.h/eeprom.c for initialization.
 extern uint8_t temp;
 extern uint8_t temp_setpoint[2];
 extern uint8_t humidity;
 extern uint8_t humidity_setpoint[2];
-extern time_t daytime[2];
-extern date_t wintertime[2];
+extern time_t  daytime[2];
+extern date_t  wintertime[2];
+extern char* controller_title[CONTROLER_TITLE_LEN];
+
+// which outputs are currently switched on? a bit-mask.
+extern uint8_t output_values;
 
 
 struct port_pin_t {
@@ -45,7 +71,7 @@ struct port_pin_t {
 
 
 
-#if 0
+#ifndef INIT_DEBUG
 #  define LOG_INIT()
 #  define LOG_INIT_EXIT()
 #else
@@ -79,3 +105,7 @@ struct port_pin_t {
 #include "selftest.h"
 #include "eeprom.h"
 #include "sht11.h"
+#include "pcf8574a.h"
+
+/*  LocalWords:  eeprom
+ */

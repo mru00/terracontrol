@@ -12,7 +12,7 @@ run: $(TARGET)
 
 
 %.exe: $(SRC)
-	gmcs -pkg:dotnet $(SRC) -out:$@
+	gmcs $(SRC) -out:$@ -r:System.Windows.Forms.dll -r:System.Drawing.dll -r:System.Data
 
 program: $(TARGET) 
 
@@ -27,4 +27,7 @@ mount:
 umount: 
 	sudo umount ../mnt
 
-.PHONY: copy copy_aux umount
+install_mono:
+	apt-get install 
+
+.PHONY: copy copy_aux umount install_mono

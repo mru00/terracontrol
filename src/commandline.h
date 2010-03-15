@@ -6,9 +6,6 @@
  *
  */
 
-
-//#define COMMANDLINE_DEBUG
-
 extern void commandline_init(void);
 extern void commandline_addchar(char c);
 

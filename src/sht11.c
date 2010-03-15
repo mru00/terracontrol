@@ -227,14 +227,17 @@ void sht11_init(void) {
 
 
 uint8_t sht11_get_humidity(void) {
+#ifdef SHT11_DUMMY
+  return 34;
+#else
   return (uint8_t) HUM_LIN( (uint32_t)read(SHT11_MEAS_RH));
+#endif
 }
 #define TMP101_ID 1
 
 uint8_t sht11_get_temperature(void) {
 
 #ifdef SHT11_DUMMY
-
   return tmp101_gettemp(TMP101_ID);
 #else
   //  return read(SHT11_MEAS_TEMP);

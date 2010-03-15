@@ -1,0 +1,19 @@
+
+# mru, november 2009
+# 2-pin screw connector block
+
+# Element(flags description pcb-name value mark_x mark_y text_x text_y text_direction text_scale text_flags)
+# Pin(x y Thickness Clearance Mask DrillHole Name Number Flags)
+
+
+Element(0x00 "screwblock connector" "R0" "" 10 10 80 100 0 100 0x00)
+(
+		Pin(0 0 60 30 90 28 "1" "1" 0x00000101)
+		Pin(0 200 60 30 90 28 "2" "2" 0x00000001)
+
+		ElementLine(-50 -50 50 -50 10)
+		ElementLine(-50 -50 -50 250 10)
+		ElementLine(-50 250 50 250 10)
+		ElementLine(50 -50 50 250 10)
+)
+

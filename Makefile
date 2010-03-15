@@ -23,12 +23,21 @@ get_version:
 build:
 	@$(MAKE) -C src build
 
-program: rights
+program: sync rights
 	@$(MAKE) -C src program
+
+sync:
+	unison -batch -auto -ui text terracontrol
+
+remote_program:
+	ssh ikarus 'cd ~/dev/erich/terrarium/; make program'
 
 rights:
 	@if [ -e $(DEV_SER) -a ! -w $(DEV_SER) ]; then sudo chmod uog+rw $(DEV_SER); fi
 	@if [ -e $(DEV_PAR) -a ! -w $(DEV_PAR) ]; then sudo chmod uog+rw $(DEV_PAR); fi
+
+install_gcc:
+	apt-get install gcc-avr uisp avr-libc binutils-avr gtkterm
 
 clean: 
 	@$(MAKE) -C src clean
@@ -44,4 +53,5 @@ startgeda:
 geda_update:
 	$(MAKE) -C pcb update
 
-.PHONY: clean rights build program arch geda
+.PHONY: clean rights build program arch geda sync install_gcc remote_program 
+

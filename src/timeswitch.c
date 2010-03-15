@@ -20,29 +20,16 @@ void timeswitch_init(void) {
   LOG_INIT_EXIT();
 }
 
-void timeswitch_check(const time_t now, uint8_t* output_values) {
+void timeswitch_check() {
   
   uint8_t i;
-
-  uint8_t values = {0,};
-  uint8_t care = {0,};
-
-  *output_values = 0;
+  output_values = 0;
 
   for ( i = 0; i < N_TIMESWITCHES; i ++ ) {
+	if ( ! timeswitch_active(i) ) continue;
 
-	if ( ! timeswitch_enabled(i) ) continue;
-
-	// create a map of all output that are handled by the timeswitches.
-	// or together the outputs
-
-	// this allows to have multiple timers on one output.
-
-	care   |= 1 << (timeswitches[i].output & ~OUTPUT_ENABLED_MASK);
-	values |= timeswitch_active(i) << (timeswitches[i].output & ~OUTPUT_ENABLED_MASK);
+	output_values |= _BV(timeswitches[i].output & ~OUTPUT_ENABLED_MASK);
   }
-
-  *output_values = values;
 }
 
 

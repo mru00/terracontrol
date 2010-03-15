@@ -19,13 +19,16 @@ void selftest_perform(void) {
 
   for ( i = 0; i < OUTPUT_LAST; i ++ ) {
 
-	hd4478_clear();
-	hd4478_puts("SELFTEST ");
-	hd4478_puts(itoa8(i, buf));
+	itoa8(i+1, buf);
+	hd4478_moveto(1, 0);
+	hd4478_puts("POST ");
+	hd4478_puts(buf);
 
+#if 0
 	uart_puts("SELFTEST ");
-	uart_puts(itoa8(i, buf));
+	uart_puts(buf);
 	uart_puts(NEWLINE);
+#endif
 
 	portmap_setpin(1, i);
 
