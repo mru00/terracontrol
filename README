@@ -16,10 +16,11 @@ with gui implemented in C# 2.0
 
 es ist nicht:
  * INT0 waehrend serial communication
+ * der pcf baustein: i2c kommunikation ohne geraet am bus
+ * display code
 
 
 es koennte sein:
  * GET TEMP  (derzeit ein log der darauf hinweisst)
-
 
 -> es muss ein watchdog her!

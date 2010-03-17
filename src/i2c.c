@@ -12,6 +12,12 @@
 
 #include "common.h"
 
+
+#ifdef I2C_DUMMY
+#  warning I2C in dummy mode
+#endif
+
+
 #define I2C_WRITE_ADR(x) ( (x << 1) + TW_WRITE )
 #define I2C_READ_ADR(x) ( (x << 1) + TW_READ ) 
 

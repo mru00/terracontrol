@@ -7,8 +7,6 @@
  *
  *  - module i2c
  *
- * consumed 8 bytes of flash after linking
- *
  */
 
 

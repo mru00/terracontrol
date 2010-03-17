@@ -272,7 +272,7 @@ static void parse_get_timers(void) {
 
 
 static void parse_get_title(void) {
-  uart_puts(controller_title);
+  uart_puts((const char*)controller_title);
   uart_puts_P(NEWLINE);
 }
 
@@ -304,6 +304,12 @@ static void parse_get_daytime(void) {
   buf[8] = ' ';
 
   uart_puts(buf);
+  uart_puts_P(NEWLINE);
+}
+
+static void parse_get_isdaytime(void) {
+  if ( time_is_daytime() ) uart_puts_P("1");
+  else uart_puts_P("0");
   uart_puts_P(NEWLINE);
 }
 
@@ -361,6 +367,7 @@ static void parse_get(void) {
   else if (TOKEN_IS("TITLE"))            parse_get_title();
   else if (TOKEN_IS("DATE"))             parse_get_date();
   else if (TOKEN_IS("DAYTIME"))          parse_get_daytime();
+  else if (TOKEN_IS("ISDAYTIME"))        parse_get_isdaytime();
   else if (TOKEN_IS("TIMERS"))           parse_get_timers();
   else if (TOKEN_IS("TEMP"))             parse_get_temp();
   else if (TOKEN_IS("TEMPSETPOINT"))     parse_get_tempsetpoint();

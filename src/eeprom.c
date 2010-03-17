@@ -18,6 +18,7 @@ time_t ee_daytime[2] EEMEM;
 uint8_t ee_tempsetpoint[2] EEMEM;
 uint8_t ee_humiditysetpoint[2] EEMEM;
 char ee_controller_title[CONTROLER_TITLE_LEN] EEMEM;
+uint8_t ee_wdt_reset_count EEMEM;
 
 struct timeswitch_t ee_timeswitches[N_TIMESWITCHES] EEMEM;
 
@@ -76,6 +77,8 @@ void eeprom_init(void) {
 						(void *) ee_controller_title, 
 						CONTROLER_TITLE_LEN);
 
+	eeprom_write_byte(&ee_wdt_reset_count, 0);
+
 	return;
   }
 
@@ -95,4 +98,11 @@ void eeprom_init(void) {
   }
 
   LOG_INIT_EXIT();
+}
+
+
+void eeprom_increate_wdt_reset(void) {
+  uint8_t wdt_count;
+  wdt_count = eeprom_read_byte(&ee_wdt_reset_count);
+  eeprom_write_byte(&ee_wdt_reset_count, wdt_count + 1);
 }

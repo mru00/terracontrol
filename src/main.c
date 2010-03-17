@@ -9,8 +9,12 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+#include <avr/wdt.h>
+#include <avr/sleep.h>
+
 
 #include "common.h"
+
 
 #define UART_BAUD_RATE     38400
 #define TMP101_ID 1
@@ -22,7 +26,7 @@ uint8_t temp_setpoint[2];
 time_t  daytime[2];
 char* controller_title[CONTROLER_TITLE_LEN];
 uint8_t output_values = 0;
-
+uint8_t reset_reason = 0;
 
 static void init_ports(void) {
   DDRD = 0xff;
@@ -35,6 +39,8 @@ void __attribute__((constructor))
 uart_constructor(void) {
   uart_init(UART_BAUD_SELECT(UART_BAUD_RATE,XTAL));
 }
+
+
 
 
 // called every second, perform output updates
@@ -78,7 +84,8 @@ void update(void) {
   hd4478_clear();
 
   hd4478_puts(itoa8(temp, buf));
-  hd4478_puts("` ");
+  hd4478_puts(DEGREE_SYMBOL " ");
+
 
   hd4478_puts(itoa8(humidity, buf));
   hd4478_puts("%");
@@ -87,14 +94,21 @@ void update(void) {
 
   switch(page) {
   case 0:
-	hd4478_puts(ttoa(time_now(), buf));
+	
+	if ( reset_reason & WDRF ) {
+	  hd4478_puts("WDT RESET");
+	}
+	else {
+	  hd4478_puts(ttoa(time_now(), buf));
+	}
+
 	if ( counter++ == 3 ) {
 	  page = 1;
 	  counter = 0;
 	}
 	break;
   case 1:
-	hd4478_puts(controller_title);
+	hd4478_puts((const char*)controller_title);
 	if ( counter++ == 3 ) {
 	  page = 0;
 	  counter = 0;
@@ -113,6 +127,8 @@ int main(void)
   _delay_ms(100);
 
   // init section -------------------------------------
+
+  reset_reason = MCUCSR;
 
   eeprom_init();
 
@@ -137,6 +153,10 @@ int main(void)
 
   selftest_perform();
 
+  wdt_enable(WDTO_2S);
+
+  set_sleep_mode(SLEEP_MODE_IDLE);
+
   // main loop section ----------------------------------
 
   for(;;) {
@@ -148,6 +168,9 @@ int main(void)
 
 	if ( time_updated() ) 
 	  update();
+
+	sleep_mode();
+	wdt_reset();
   }
 
 }

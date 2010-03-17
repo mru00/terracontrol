@@ -13,9 +13,22 @@ void selftest_perform(void) {
 
   uint8_t i;
   char buf[4];
+  uint8_t j;
 
   LOG_INIT();
 
+#if 0
+  for ( i = 0; i < 16; i ++ ) {
+
+	hd4478_moveto(0, 0);
+	for ( j = 0; j < 8; j ++ ) hd4478_putc(i*16 + j);
+
+	hd4478_moveto(1, 0);
+	for ( j = 0; j < 8; j ++ ) hd4478_putc(i*16 + 8+j);
+
+	_delay_ms(1000);
+  }
+#endif
 
   for ( i = 0; i < OUTPUT_LAST; i ++ ) {
 
@@ -30,16 +43,14 @@ void selftest_perform(void) {
 	uart_puts(NEWLINE);
 #endif
 
-	portmap_setpin(1, i);
+	//	portmap_setpin(1, i);
 
-	_delay_ms(500);
+	//	_delay_ms(500);
 
-	portmap_setpin(0, i);
+	//	portmap_setpin(0, i);
 	
-	_delay_ms(500);
+	//	_delay_ms(500);
   }
-
-  hd4478_clear();
 
   LOG_INIT_EXIT();
 }

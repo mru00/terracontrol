@@ -10,6 +10,12 @@
 #include "common.h"
 
 
+
+#ifdef SHT11_DUMMY
+#  warning SHT11 in dummy mode
+#endif
+
+
 #if SHT11_RESOLUTION == 8
 # define HUM_LIN(so) ( so < 107 ? ((-230 + 138 * so) / 256) : ((1306 + 122*so)/256) )
 #elif SHT11_RESOLUTION == 12
@@ -227,20 +233,25 @@ void sht11_init(void) {
 
 
 uint8_t sht11_get_humidity(void) {
-#ifdef SHT11_DUMMY
+#if defined SHT11_DUMMY || defined SHT11_DUMMY_TMP101
   return 34;
 #else
   return (uint8_t) HUM_LIN( (uint32_t)read(SHT11_MEAS_RH));
 #endif
 }
-#define TMP101_ID 1
 
 uint8_t sht11_get_temperature(void) {
 
 #ifdef SHT11_DUMMY
-  return tmp101_gettemp(TMP101_ID);
+
+  return 33;
+
+#elif defined SHT11_DUMMY_TMP101
+
+  return tmp101_gettemp(SHT11_DUMMY_TMP101);
+
 #else
-  //  return read(SHT11_MEAS_TEMP);
+  return read(SHT11_MEAS_TEMP);
 
 #  warning sht11_get_temperature not implemented
 

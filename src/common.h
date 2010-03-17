@@ -34,12 +34,31 @@ enum {
 // maximum length of controller title
 #define CONTROLER_TITLE_LEN 9
 
-// some debug statements
+
+
+/*  some debug flags */
 //#define INIT_DEBUG
 //#define COMMANDLINE_DEBUG
 //#define PORTMAP_DEBUG
+//#define SHT11_DEBUG
 
 
+/* DUMMY = no hardware flags */
+#define PCF8574A_DUMMY
+//#define SHT11_DUMMY
+//#define TMP101_DUMMY
+//#define DS1307_DUMMY
+#define HD4478_DUMMY
+#define SHT11_DUMMY_TMP101 1
+
+
+/*
+ * SHT11_DUMMY: puts SHT11 in dummy (=no hardware) mode
+ *
+ * SHT11_DUMMY_TMP101: puts SHT11 in dummy mode but uses a TMP101
+ * to get the temperature. the value of the define is used as 
+ * TMP101 address
+ */
 
 typedef unsigned char bool;
 typedef uint32_t time_t;
@@ -81,6 +100,7 @@ struct port_pin_t {
 
 
 #define NEWLINE "\r\n"
+#define DEGREE_SYMBOL "\xdf"
 
 
 #ifndef NULL
@@ -95,7 +115,6 @@ struct port_pin_t {
 #include "time.h"
 #include "i2c.h"
 #include "timeswitch.h"
-//#include "tlv5620.h"
 #include "portmap.h"
 #include "tmp101.h"
 #include "ds1307.h"
@@ -107,5 +126,8 @@ struct port_pin_t {
 #include "sht11.h"
 #include "pcf8574a.h"
 
-/*  LocalWords:  eeprom
+
+
+
+/*  LocalWords:  eeprom sht pcf
  */

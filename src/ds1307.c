@@ -13,6 +13,11 @@
 #define DS1307_ADDRESS 0x68
 
 
+#ifdef DS1307_DUMMY
+#  warning DS1307 in dummy mode
+#endif
+
+
 // DS1307 registers
 enum {
   DR_SECONDS,
@@ -59,6 +64,7 @@ void ds1307_init(void) {
 
   LOG_INIT();
 
+#ifndef DS1307_DUMMY
   uint8_t t;
 
   i2c_c_read_start_reg(DS1307_ADDRESS, DR_SECONDS);
@@ -82,28 +88,33 @@ void ds1307_init(void) {
 					   (0<<DC_OUT)); // normal output
   }
 
+#endif
   LOG_INIT_EXIT();
 }
 
 void ds1307_setdate(uint8_t y, uint8_t m, uint8_t d) {
 
+#ifndef DS1307_DUMMY
   i2c_c_write_start_reg(DS1307_ADDRESS, DR_DATE);
   i2c_c_write_next ( to_bcd(d) );
   i2c_c_write_next ( to_bcd(m) );
   i2c_c_write_last ( to_bcd(y) );
-
+#endif
 }
 
 
 void ds1307_settime(uint8_t h, uint8_t m, uint8_t s) {
+#ifndef DS1307_DUMMY
 
   i2c_c_write_start_reg(DS1307_ADDRESS, DR_SECONDS);
   i2c_c_write_next ( to_bcd(s) & 0x7f );
   i2c_c_write_next ( to_bcd(m) );
   i2c_c_write_last ( to_bcd(h)  );
+#endif
 }
 
 time_t ds1307_gettime(void) {
+#ifndef DS1307_DUMMY
 
   i2c_c_read_start_reg(DS1307_ADDRESS, DR_SECONDS);
 
@@ -112,9 +123,13 @@ time_t ds1307_gettime(void) {
   uint8_t h = from_bcd(i2c_c_read_last());
 
   return  time_from_hms(h, m, s);
+#else
+  return time_from_hms(1, 2, 3);
+#endif
 }
 
 date_t ds1307_getdate(void) {
+#ifndef DS1307_DUMMY
 
   i2c_c_read_start_reg(DS1307_ADDRESS, DR_DATE);
 
@@ -123,4 +138,7 @@ date_t ds1307_getdate(void) {
   uint8_t y = from_bcd(i2c_c_read_last());
 
   return  date_from_dmy(d, m, y);
+#else
+  return date_from_dmy(1, 2, 3);
+#endif
 }

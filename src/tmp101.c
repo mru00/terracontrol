@@ -15,6 +15,12 @@
 
 #include "common.h"
 
+
+#ifdef TMP101_DUMMY
+#  warning TMP101 in dummy mode
+#endif
+
+
 enum {
   TC_SD,         // shutdown
   TC_TM,         // thermostat mode
@@ -38,6 +44,8 @@ void tmp101_init(uint8_t id) {
 
   LOG_INIT();
 
+#ifndef TMP101_DUMMY
+
   // write configuration
   i2c_c_write_start_reg(TMP101_BASE_ADRESS + id, TR_CONF);
   i2c_c_write_last( _BV(TC_R0) | _BV(TC_R1) );
@@ -47,13 +55,19 @@ void tmp101_init(uint8_t id) {
   i2c_c_write_start(TMP101_BASE_ADRESS + id);
   i2c_c_write_last( TR_TEMP );
 
+#endif
+
   LOG_INIT_EXIT();
 }
 
 
 uint8_t tmp101_gettemp(uint8_t id) {
+#ifdef TMP101_DUMMY
+  return 42;
+#else
   i2c_c_read_start(TMP101_BASE_ADRESS + id);
   return i2c_c_read_last();
+#endif
 }
 
 

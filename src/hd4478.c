@@ -1,8 +1,36 @@
+/************************************************************************
+ * This file is part of TerraControl.								    *
+ * 																	    *
+ * TerraControl is free software; you can redistribute it and/or modify *
+ * it under the terms of the GNU General Public License as published    *
+ * by the Free Software Foundation; either version 2 of the License, or *
+ * (at your option) any later version.								    *
+ * 																	    *
+ * TerraControl is distributed in the hope that it will be useful,	    *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of	    *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the	    *
+ * GNU General Public License for more details.						    *
+ * 																	    *
+ * You should have received a copy of the GNU General Public License    *
+ * along with TerraControl; if not, write to the Free Software		    *
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 *
+ * USA																    *
+ * Written and (c) by mru											    *
+ * Contact <mru@sisyphus.teil.cc> for comment & bug reports				*
+ ************************************************************************/
 /* 
- * terrarium control
  * mru, november 2009
  *
+ * HD4478 LCD Display Controller
+ * 
+ * was implemented for and only tested with an
+ * 2x8 LCD.
+ *
+ * $Id$
+ *
+ * $Log$
  */
+
 
 
 #include <avr/io.h>
@@ -12,6 +40,10 @@
 
 
 static uint8_t is_busy(void);
+
+#ifdef HD4478_DUMMY
+#  warning HD4478 in dummy mode
+#endif
 
 
 enum {
@@ -153,6 +185,7 @@ static uint8_t read ( uint8_t rs ) {
 static uint8_t is_busy(void) {
 
 #ifdef HD4478_DUMMY
+  _delay_ms(3);
   return 0;
 #else
   return (read(HD4478_REG_IR) & _BV(HD4478_BUSY_FLAG)) != 0;
@@ -243,13 +276,7 @@ void hd4478_moveto(const uint8_t r, const uint8_t c) {
 
 void hd4478_putc(const char character) {
   // write a character to current position
-  write(HD4478_REG_DATA,
-		//_BV(HD4478_SETCGRAM)) |
-		(character & 0x7f));
-
-  // something went wrong here. i tried to adhere to the documentation
-  // of the hd4478, but the _BV... hinders the display of
-  // number. anyways, this way it seems to work.
+  write(HD4478_REG_DATA, character);
 }
 
 void hd4478_puts(const char* string) {
