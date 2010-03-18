@@ -1,0 +1,20 @@
+
+# mru, november 2009
+# simple relais
+
+# Element(flags description pcb-name value mark_x mark_y text_x text_y text_direction text_scale text_flags)
+# Pin(x y Thickness Clearance Mask DrillHole Name Number Flags)
+
+
+Element(0x00 "small poti" "P0" "" 10 10 80 100 0 100 0x00)
+(
+		Pin(0 0 60 30 90 28 "C1" "1" 0x00000101)
+		Pin(0 200 60 30 90 28 "C2" "2" 0x00000001)
+		Pin(400 100 60 30 90 28 "S1" "3" 0x00000001)
+
+		ElementLine(0 -20 400 -20 10)
+		ElementLine(400 -20 400 220 10)
+		ElementLine(400 220 0 220 10)
+		ElementLine(0 220 0 -20 10)
+)
+

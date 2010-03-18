@@ -1,0 +1,2 @@
+schematics IOBoard.sch TerraControl.sch
+output-name comb-board

@@ -1,0 +1,20 @@
+
+# mru, november 2009
+# uhrenbatterie
+
+# Element(flags description pcb-name value mark_x mark_y text_x text_y text_direction text_scale text_flags)
+# Pin(x y Thickness Clearance Mask DrillHole Name Number Flags)
+
+
+Element(0x00 "Uhrenbatterie" "Batt" "" 10 10 80 100 0 100 0x00)
+(
+		Pin(200 0 60 30 90 28 "-" "1" 0x00000101)
+		Pin(0 700 60 30 90 28 "+" "2" 0x00000001)
+		Pin(400 700 60 30 90 28 "+" "2" 0x00000001)
+
+		ElementLine(-400 -500 800 -500 10)
+		ElementLine(800 -500 800 700 10)
+		ElementLine(800 700 -400 700 10)
+		ElementLine(-400 700 -400 -500 10)
+)
+
