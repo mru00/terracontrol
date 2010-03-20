@@ -172,7 +172,7 @@ int main(void)
 
   selftest_perform();
 
-  wdt_enable(WDTO_2S);
+  //  wdt_enable(WDTO_2S);
 
   //  set_sleep_mode(SLEEP_MODE_IDLE);
 

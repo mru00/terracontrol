@@ -70,8 +70,8 @@ enum {
 //#define SHT11_DUMMY
 //#define TMP101_DUMMY
 //#define DS1307_DUMMY
-#define HD4478_DUMMY
-#define SHT11_DUMMY_TMP101 1
+//#define HD4478_DUMMY
+//#define SHT11_DUMMY_TMP101 1
 
 /*
  * SHT11_DUMMY: puts SHT11 in dummy (=no hardware) mode
@@ -145,6 +145,12 @@ struct port_pin_t {
 #  define LOG_INIT() uart_puts ( "<" __FILE__  )
 #  define LOG_INIT_EXIT() uart_puts ( ">" NEWLINE )
 #endif
+
+
+
+// pin definitions
+#define SHT11_PIN_DATA 3,3
+#define SHT11_PIN_SCK  3,4
 
 
 #define NEWLINE "\r\n"
