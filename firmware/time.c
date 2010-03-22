@@ -13,7 +13,6 @@ date_t current_date;
 time_t current_time;
 static uint8_t volatile newtime;
 
-
 ISR(INT0_vect) {
   newtime++;
 }
@@ -22,7 +21,10 @@ void time_init(void) {
 
   LOG_INIT();
 
-  DDRD &= ~(1 << PD2);
+  DDRD &= ~_BV(PD2);
+
+  // internal pullup seems NOT to work quite ok
+  //  PORTD |= _BV(PD2);
 
   MCUCR |= ( (1<<ISC01) | (1<<ISC00));  //The rising edge of INT0 generates an interrupt request.  
   GICR |= (1<< INT0);                   //enable external interrupt 0

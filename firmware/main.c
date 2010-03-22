@@ -28,7 +28,7 @@
 #include <util/delay.h>
 #include <avr/wdt.h>
 #include <avr/sleep.h>
-
+#include <avr/pgmspace.h>
 
 #include "common.h"
 
@@ -103,11 +103,12 @@ void update(void) {
 
   pcf8574a_set(output_values);
 
+  pcf8574a_set(humidity > 50);
+
   hd4478_clear();
 
-  hd4478_puts(itoa8(temp, buf));
+  hd4478_puts(itoa8(humidity, buf));
   hd4478_puts(DEGREE_SYMBOL " ");
-
 
   hd4478_puts(itoa8(humidity, buf));
   hd4478_putc('%');
@@ -135,7 +136,6 @@ void update(void) {
   }
 
 }
-
 
 
 int main(void)
@@ -169,10 +169,12 @@ int main(void)
 
   hd4478_moveto(0, 0);
   hd4478_puts("Starting");
+  uart_puts_P("Starting" NEWLINE);
+
 
   selftest_perform();
 
-  //  wdt_enable(WDTO_2S);
+  wdt_enable(WDTO_2S);
 
   //  set_sleep_mode(SLEEP_MODE_IDLE);
 
@@ -182,18 +184,17 @@ int main(void)
 
 	input = uart_getc();
 
-	if ( input != UART_NO_DATA ) 
+	if ( input != UART_NO_DATA )  {
 	  commandline_addchar(input & 0xff);
+	}
+
 
 	if ( time_updated() ) {
+	  wdt_reset();
 	  update();
 	}
 
-	// if the timeswitches were updated, write them to eeprom
-
-
 	//	sleep_mode();
-	wdt_reset();
   }
 
 }

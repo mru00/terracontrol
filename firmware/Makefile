@@ -6,7 +6,8 @@ SRC = main.c  uart.c time.c timeswitch.c portmap.c tmp101.c \
 	sht11.c itoa.c pcf8574a.c
 
 
-F_OSC = 11059201L
+#F_OSC = 11059201L
+F_OSC = 12288000L
 
 
 #CFLAGS += -Werror

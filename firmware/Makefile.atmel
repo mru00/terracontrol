@@ -332,8 +332,8 @@ gccversion :
 
 
 set_fuses: $(TARGET).hex $(TARGET).eep
-	echo $(UISP) $(UISP_FLAGS) --wr_fuse_l=0xef
-	echo $(UISP) $(UISP_FLAGS) --wr_fuse_h=0xc9
+	$(UISP) $(UISP_FLAGS) --wr_fuse_l=0xef
+	$(UISP) $(UISP_FLAGS) --wr_fuse_h=0xc9
 #	echo $(UISP) $(UISP_FLAGS) --wr_fuse_e=0xff
 
 

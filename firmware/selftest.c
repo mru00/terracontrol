@@ -38,9 +38,9 @@ void selftest_perform(void) {
 	uart_puts(NEWLINE);
 #endif
 
-	//	portmap_setpin(1, i);
+	pcf8574a_set(i);
 
-	//	_delay_ms(500);
+	_delay_ms(500);
 
 	//	portmap_setpin(0, i);
 	

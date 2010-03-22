@@ -63,14 +63,14 @@ enum {
 //#define PORTMAP_DEBUG
 //#define SHT11_DEBUG
 //#define HD4478_DEBUG
-
+//#define I2C_DEBUG
 
 /* DUMMY = no hardware flags */
-#define PCF8574A_DUMMY
+//#define PCF8574A_DUMMY
 //#define SHT11_DUMMY
-//#define TMP101_DUMMY
+#define TMP101_DUMMY
 //#define DS1307_DUMMY
-//#define HD4478_DUMMY
+#define HD4478_DUMMY
 //#define SHT11_DUMMY_TMP101 1
 
 /*
@@ -147,10 +147,6 @@ struct port_pin_t {
 #endif
 
 
-
-// pin definitions
-#define SHT11_PIN_DATA 3,3
-#define SHT11_PIN_SCK  3,4
 
 
 #define NEWLINE "\r\n"

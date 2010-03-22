@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include <util/twi.h>
+#include <avr/pgmspace.h>
 
 #include "common.h"
 
@@ -47,11 +48,25 @@ static uint8_t current_addr = 0;
 
 static void i2c_assert_state2(uint8_t state, const char* msg) {
 
-  if ((TWSR & 0xF8) != state)
-	printf("i2c error (%s) for 0x%x TWSR&0xF8:0x%x, expected:0x%x\r\n", msg, current_addr, (TWSR & 0xF8), state);
-  else 
-	printf("i2c success (%s) for 0x%x TWSR&0xF8:0x%x\r\n", msg, current_addr, state);
+  char buf[4];
 
+  if ((TWSR & 0xF8) != state) {
+	uart_puts_P("i2c error   " );
+	uart_puts(itoa8(current_addr, buf));
+	uart_puts(" : ");
+	uart_puts(msg);
+	uart_puts(" [");
+	uart_puts(itoa8(TWSR&0xf8, buf));
+	uart_puts_P("]" NEWLINE);
+	//	printf("i2c error (%s) for 0x%x TWSR&0xF8:0x%x, expected:0x%x\r\n", msg, current_addr, (TWSR & 0xF8), state);
+
+  }
+  else {
+	uart_puts_P("i2c success ");
+	uart_puts(itoa8(current_addr, buf));
+	uart_puts_P(NEWLINE);
+	//printf("i2c success (%s) for 0x%x TWSR&0xF8:0x%x\r\n", msg, current_addr, state);
+  }
 }
 
 #  define ASSERT_STATE(state) do { i2c_assert_state2(state, __FUNCTION__); } while (0)

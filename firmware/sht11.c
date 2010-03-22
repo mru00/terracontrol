@@ -13,9 +13,15 @@
 #  warning SHT11 in dummy mode
 #endif
 
-#if !defined SHT11_PIN_DATA || !defined SHT11_PIN_SCK
-#  error pin mapping missing
-#endif
+//#if !defined SHT11_PIN_DATA || !defined SHT11_PIN_SCK
+//#  error pin mapping missing
+//#endif
+
+
+// pin definitions
+#define SHT11_PIN_DATA 3,3
+#define SHT11_PIN_SCK  3,4
+
 
 
 // sht11 address, unused anyway
@@ -237,6 +243,7 @@ static uint8_t read(uint8_t what) {
 	return (uint8_t) y;
   }
 
+  return 0;
 #elif SHT11_RESOLUTION == 12
 
 # error "n.i."
