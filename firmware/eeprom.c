@@ -42,15 +42,15 @@ void eeprom_init(void) {
   // configuration
   if ( eeprom_read_byte(&ee_valid_configuration) != VALID_MASK) {
 
-	time_t t[2];
-	t[0] = time_from_hms(8, 0, 0);
-	t[1] = time_from_hms(20, 0, 0);
+	settings.daytime[0] = time_from_hms(8, 0, 0);
+	settings.daytime[1] = time_from_hms(20, 0, 0);
 
-	for ( int i = 0; i< 2; i ++ ) {
-	  settings.daytime[i] = t[i];
-	  settings.temp_setpoint[i] = 20;
-	  settings.humidity_setpoint[i] = 30;
-	}
+	settings.temp_setpoint[0] = 20;
+	settings.temp_setpoint[1] = 25;
+
+	settings.humidity_setpoint[0] = 50;
+	settings.humidity_setpoint[1] = 55;
+
 
 	
 	timeswitch_set(0, 
