@@ -36,10 +36,7 @@
 #pragma once
 
 
-// uncomment to enable debug output
-//#define I2C_DEBUG
-
-#define I2C_USE_INTERNAL_PULLUP
+//#define I2C_USE_INTERNAL_PULLUP
 
 
 

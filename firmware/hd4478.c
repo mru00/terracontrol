@@ -132,7 +132,7 @@ static void write_nibble ( uint8_t rs, uint8_t data) {
   HD4478_DB_W |= data & 0x0f;
   nop();  nop();
   clearpin2(HD4478_E);
-  nop(); nop();
+  _delay_us(1);
 
   setpin2(HD4478_E);
 
@@ -142,10 +142,10 @@ static void write_nibble ( uint8_t rs, uint8_t data) {
 
 static void write ( uint8_t rs, uint8_t data) {
   write_nibble(rs, data >> 4);
-  nop(); nop();
+  _delay_us(1);
 
   write_nibble(rs, data);
-  nop(); nop();
+  _delay_us(1);
   while (is_busy());
 }
 
@@ -162,14 +162,15 @@ static uint8_t read_nibble ( uint8_t rs ) {
 
   setpin2(HD4478_RW);
   xpin2(rs, HD4478_RS);
-  nop(); nop();
+  _delay_us(1);
   setpin2(HD4478_E);
-  nop();  nop();
+  _delay_us(1);
+  _delay_us(1);
   data = HD4478_DB_R & 0x0f;
-  nop();  nop();
+  _delay_us(1);
   clearpin2(HD4478_E);
 
-  nop(); nop();
+  _delay_us(1);
 
   return data;
 }
@@ -181,7 +182,7 @@ static uint8_t read ( uint8_t rs ) {
 static uint8_t is_busy(void) {
 
 #ifdef HD4478_DUMMY
-  _delay_ms(3);
+  _delay_ms(2);
   return 0;
 #else
   return (read(HD4478_REG_IR) & _BV(HD4478_BUSY_FLAG)) != 0;

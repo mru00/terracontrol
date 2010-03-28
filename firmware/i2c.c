@@ -86,9 +86,9 @@ void i2c_init(void) {
 
   LOG_INIT();
 
-
 #ifdef I2C_USE_INTERNAL_PULLUP
   // enable internal pull-ups
+  // does not work good
   DDRC &= ~( _BV(PC5) | _BV(PC4) );
   PORTC |= _BV(PC5) | _BV(PC4);
 #endif
@@ -98,7 +98,8 @@ void i2c_init(void) {
 
   // set timing
   TWBR = 10;   // 
-  TWSR &= ~3;  // TWPS=1 -> prescaler = 1
+  //  TWSR &= ~3;  // TWPS=1 -> prescaler = 1
+  TWSR = 2;
 
   LOG_INIT_EXIT();
 }

@@ -92,10 +92,10 @@ static void write_bit(uint8_t bit) {
 
   if ( bit ) data_release();
   else data_low();
-  _delay_ms(1);
+  _delay_us(1);
 
-  sck_hi(); _delay_ms(1);
-  sck_lo(); _delay_ms(1);
+  sck_hi(); _delay_us(1);
+  sck_lo(); _delay_us(1);
 
   data_release();
 }
@@ -118,7 +118,9 @@ static void write_byte(uint8_t byte) {
 
 #ifndef SHT11_DUMMY
   uint8_t nack = read_bit();
-  if (nack) uart_puts_P(" failed to receive ack" NEWLINE);
+#ifdef SHT11_DEBUG
+  if (nack) uart_puts_P(" SHT11: no ack" NEWLINE);
+#endif
 #endif
 
 }
@@ -129,7 +131,7 @@ static uint8_t read_byte(uint8_t ack) {
   uint8_t v = 0;
   for (uint8_t i = 0x80; i>0; i/=2 ) {
 	if (read_bit()) v |= i ;
-	_delay_ms(1);
+	_delay_us(1);
   }
   write_bit(ack);
 
@@ -148,12 +150,12 @@ static void transmission_start(void) {
 
   data_release();
 
-  sck_hi();       _delay_ms(1);
-  data_low();     _delay_ms(1);
-  sck_lo();       _delay_ms(1);
-  sck_hi();       _delay_ms(1);
-  data_release(); _delay_ms(1);
-  sck_lo();       _delay_ms(1);
+  sck_hi();       _delay_us(1);
+  data_low();     _delay_us(1);
+  sck_lo();       _delay_us(1);
+  sck_hi();       _delay_us(1);
+  data_release(); _delay_us(1);
+  sck_lo();       _delay_us(1);
 
 }
 
@@ -164,7 +166,7 @@ static void connection_reset(void) {
    * DATA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ (always hi)
    */
 
-  _delay_ms(1);
+  _delay_us(1);
 
   data_release();
 
@@ -200,12 +202,15 @@ static uint8_t read(uint8_t what) {
   transmission_start();
   write_byte(what);
 
+  // use no timeout in NODUMMY mode, so watchdog kicks in!
 #ifndef SHT11_DUMMY
-  for ( uint8_t i = 0; i < 500; i++ ) {
-	_delay_ms(1);
+  while ( getpin3(SHT11_PIN_DATA) );
+#else
+  for ( uint8_t i = 0; i < 50; i++ ) {
+	_delay_us(1);
 	if ( !getpin3(SHT11_PIN_DATA) ) break;
   }
-  if (getpin3(SHT11_PIN_DATA) ) uart_puts_P("did not receive measurement" NEWLINE);
+  if (getpin3(SHT11_PIN_DATA) ) uart_puts_P("SHT11: read failed" NEWLINE);
 #endif
 
   b1 = read_byte(SEND_ACK);

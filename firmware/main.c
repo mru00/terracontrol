@@ -18,10 +18,6 @@
  * Written and (c) by mru											    *
  * Contact <mru@sisyphus.teil.cc> for comment & bug reports				*
  ************************************************************************/
-/*
- * using these sources:
- *   - http://www.mikrocontroller.net/topic/12185 (clock)
- */
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -32,23 +28,15 @@
 
 #include "common.h"
 
-
 #define UART_BAUD_RATE     38400
-#define TMP101_ID 1
 
 
 struct global_settings_t settings;
 
 uint8_t temp = 0;
 uint8_t humidity;
-/* uint8_t humidity_setpoint[2]; */
-/* uint8_t temp_setpoint[2]; */
-/* time_t  daytime[2]; */
-/* char* controller_title[CONTROLER_TITLE_LEN]; */
 uint8_t output_values = 0;
 uint8_t reset_reason = 0;
-
-
 
 static void init_ports(void) {
   DDRD = 0xff;
@@ -61,9 +49,6 @@ void __attribute__((constructor))
 uart_constructor(void) {
   uart_init(UART_BAUD_SELECT(UART_BAUD_RATE,XTAL));
 }
-
-
-
 
 // called every second, perform output updates
 void update(void) {
@@ -79,6 +64,8 @@ void update(void) {
   char buf[9];
 
   static uint8_t counter = 0;
+  static uint8_t counter2 = 0;
+
   static uint8_t page = 0;
 
 
@@ -101,13 +88,14 @@ void update(void) {
   output_values |= heating_on << heating_output;
   output_values |= fogger_on << OUTPUT_FOGGER;
 
-  pcf8574a_set(output_values);
+  //  pcf8574a_set(output_values);
 
-  pcf8574a_set(humidity > 50);
+  pcf8574a_set(counter2 ++);
 
   hd4478_clear();
 
-  hd4478_puts(itoa8(humidity, buf));
+  hd4478_moveto(0, 0);
+  hd4478_puts(itoa8(temp, buf));
   hd4478_puts(DEGREE_SYMBOL " ");
 
   hd4478_puts(itoa8(humidity, buf));
@@ -159,9 +147,9 @@ int main(void)
 
   timeswitch_init();
 
+
   i2c_init();
   ds1307_init();
-  tmp101_init(TMP101_ID);
   commandline_init();
   hd4478_init();
   sht11_init();
@@ -169,7 +157,6 @@ int main(void)
 
   hd4478_moveto(0, 0);
   hd4478_puts("Starting");
-  uart_puts_P("Starting" NEWLINE);
 
 
   selftest_perform();
@@ -178,23 +165,24 @@ int main(void)
 
   //  set_sleep_mode(SLEEP_MODE_IDLE);
 
-  // main loop section ----------------------------------
+  /* main loop section ---------------------------------- */
 
   for(;;) {
 
 	input = uart_getc();
-
+	
 	if ( input != UART_NO_DATA )  {
 	  commandline_addchar(input & 0xff);
 	}
-
 
 	if ( time_updated() ) {
 	  wdt_reset();
 	  update();
 	}
 
-	//	sleep_mode();
+	xpin2 ( PIND & _BV(PD2),  &PORTB, PB0 );
+	xpin2 ( !((reset_reason == 8) &&  !(PIND & _BV(PD2))),  &PORTB, PB1 );
+
   }
 
 }

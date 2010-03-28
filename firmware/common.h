@@ -68,9 +68,8 @@ enum {
 /* DUMMY = no hardware flags */
 //#define PCF8574A_DUMMY
 //#define SHT11_DUMMY
-#define TMP101_DUMMY
 //#define DS1307_DUMMY
-#define HD4478_DUMMY
+//#define HD4478_DUMMY
 //#define SHT11_DUMMY_TMP101 1
 
 /*
@@ -147,9 +146,7 @@ struct port_pin_t {
 #endif
 
 
-
-
-#define NEWLINE "\r\n"
+#define NEWLINE "\n"
 #define DEGREE_SYMBOL "\xdf"
 
 
@@ -166,7 +163,6 @@ struct port_pin_t {
 #include "i2c.h"
 #include "timeswitch.h"
 #include "portmap.h"
-#include "tmp101.h"
 #include "ds1307.h"
 #include "commandline.h"
 #include "version.h"

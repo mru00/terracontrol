@@ -23,11 +23,16 @@ void time_init(void) {
 
   DDRD &= ~_BV(PD2);
 
-  // internal pullup seems NOT to work quite ok
+  // internal pullup seems NOT to work 
   //  PORTD |= _BV(PD2);
 
-  MCUCR |= ( (1<<ISC01) | (1<<ISC00));  //The rising edge of INT0 generates an interrupt request.  
-  GICR |= (1<< INT0);                   //enable external interrupt 0
+  PORTD &= ~_BV(PD2);
+
+  // The rising edge of INT0 generates an interrupt request.  
+  // enable external interrupt 0
+
+  MCUCR |= _BV(ISC01) | _BV(ISC00);
+  GICR  |= _BV(INT0);                   
 
   newtime = 0;
 

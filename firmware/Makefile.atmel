@@ -38,8 +38,6 @@
 
 
 # MCU name
-MCU = atmega8
-MCU_DUDE = m8
 
 # Main Oscillator Frequency
 # This is only used to define F_OSC in all assembler and c-sources.
@@ -332,8 +330,8 @@ gccversion :
 
 
 set_fuses: $(TARGET).hex $(TARGET).eep
-	$(UISP) $(UISP_FLAGS) --wr_fuse_l=0xef
-	$(UISP) $(UISP_FLAGS) --wr_fuse_h=0xc9
+	$(UISP) $(UISP_FLAGS) --wr_fuse_l=$(FUSE_L)
+	$(UISP) $(UISP_FLAGS) --wr_fuse_h=$(FUSE_H)
 #	echo $(UISP) $(UISP_FLAGS) --wr_fuse_e=0xff
 
 

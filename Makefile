@@ -38,7 +38,7 @@ sync:
 	unison -silent -batch -auto -ui text terracontrol
 
 remote_program:
-	ssh ikarus 'cd ~/dev/erich/terrarium/; make sync && make clean program && make sync;'
+	ssh ikarus 'cd ~/dev/erich/terrarium/; make sync && make clean program; make sync;'
 
 rights:
 	@if [ -e $(DEV_SER) -a ! -w $(DEV_SER) ]; then sudo chmod uog+rw $(DEV_SER); fi
@@ -54,6 +54,8 @@ clean:
 arch:
 	@tar czf TerraControl-$(VERSION).tar.gz $(ARCH_FILES)
 
+release:
+	$(MAKE) -C firmware release
 
 startgeda:
 	$(MAKE) -C pcb startgeda
