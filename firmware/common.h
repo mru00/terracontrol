@@ -166,6 +166,7 @@ struct port_pin_t {
 #include "ds1307.h"
 #include "commandline.h"
 #include "version.h"
+#include "build-id.h"
 #include "hd4478.h"
 #include "selftest.h"
 #include "eeprom.h"

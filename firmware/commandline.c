@@ -362,7 +362,7 @@ static void parse_get(void) {
   else if (TOKEN_IS("HUMIDITY"))         parse_get_humidity();
   else if (TOKEN_IS("HUMIDITYSETPOINT")) parse_get_humiditysetpoint();
   else if (TOKEN_IS("OUTPUTS"))          parse_get_outputs();
-  else if (TOKEN_IS("VERSION"))          uart_puts_P("TerraControl " VERSION ", mru 2009" NEWLINE );
+  else if (TOKEN_IS("VERSION"))          uart_puts_P("TerraControl " VERSION ", Build " BUILD_ID ", mru 2010" NEWLINE );
   else  { parse_fail = 1; uart_puts_P(" UNKNOWN COMMAND"); }
 }
 

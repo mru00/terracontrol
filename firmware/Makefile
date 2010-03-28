@@ -17,7 +17,7 @@ VERSION_FILE = version.h
 
 
 GET_DEFINES = $(CC) $(ALL_CFLAGS) -mmcu=$(MCU) -E -dM $(SRC)
-BUILD := $(shell sed -e 's/\#define BUILD_ID \(.*\)/\1/p;d' $(BUILD_ID_FILE))
+BUILD := $(shell sed -e 's/\#define BUILD_ID "\(.*\)"/\1/p;d' $(BUILD_ID_FILE))
 VERSION := $(shell sed -e 's/\#define VERSION "\(.*\)"/\1/p;d' $(VERSION_FILE))
 
 DATE = $(shell date +%Y%m%d)
@@ -33,7 +33,7 @@ erase_flash:
 
 increase_build_number:
 	@touch $(BUILD_ID_FILE)
-	@echo "#define BUILD_ID $$(( $(BUILD) + 1 ))" > $(BUILD_ID_FILE)
+	@echo "#define BUILD_ID \"$$(( $(BUILD) + 1 ))\"" > $(BUILD_ID_FILE)
 
 find_dummy:
 	@$(call GET_DEFINES) > /dev/null
