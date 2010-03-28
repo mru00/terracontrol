@@ -144,7 +144,6 @@ int main(void)
 
   timeswitch_init();
 
-
   i2c_init();
   ds1307_init();
   commandline_init();
