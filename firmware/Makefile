@@ -42,7 +42,7 @@ find_dummy:
 check_branch:
 	@[ $(GET_BRANCH) = "master" ] || ( echo "error: not on branch 'master'!"; false)
 
-release: find_dummy increase_build_number build sizeafter
+release: check_branch find_dummy increase_build_number build sizeafter
 	@git commit -a -m "committing everything for TAG $(RELEASE_FILENAME)"
 	@git tag -m "TAG for $(RELEASE_FILENAME)" $(RELEASE_FILENAME) master
 	@echo
