@@ -16,7 +16,7 @@ BUILD_ID_FILE = build-id.h
 VERSION_FILE = version.h
 
 
-GET_DEFINES = $(CC) $(ALL_CFLAGS) -mmcu=$(MCU) -E -dM $(SRC)
+GET_DEFINES = $(CC) $(ALL_CFLAGS) -mmcu=$(MCU) -E -dM $(SRC) -Werror
 BUILD := $(shell sed -e 's/\#define BUILD_ID "\(.*\)"/\1/p;d' $(BUILD_ID_FILE))
 VERSION := $(shell sed -e 's/\#define VERSION "\(.*\)"/\1/p;d' $(VERSION_FILE))
 
@@ -44,7 +44,7 @@ release: find_dummy increase_build_number build
 	@cp $(TARGET).map $(RELEASE_DIR)/$(RELEASE_FILENAME).map
 	@echo
 	@echo "Released to $(RELEASE_DIR)/$(RELEASE_FILENAME)"
-	@git commit -a -m "committing everything for TAG"
+	@git commit -a -m "committing everything for TAG $(RELEASE_FILENAME)"
 	@git tag -m "TAG for $(RELEASE_FILENAME)" $(RELEASE_FILENAME) master
 	@echo
 
