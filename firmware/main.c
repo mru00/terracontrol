@@ -88,9 +88,7 @@ void update(void) {
   output_values |= heating_on << heating_output;
   output_values |= fogger_on << OUTPUT_FOGGER;
 
-  //  pcf8574a_set(output_values);
-
-  pcf8574a_set(counter2 ++);
+  pcf8574a_set(output_values);
 
   hd4478_clear();
 
