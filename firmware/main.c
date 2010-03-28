@@ -98,7 +98,6 @@ void update(void) {
 
   hd4478_puts(itoa8(humidity, buf));
   hd4478_putc('%');
-  hd4478_putc('0'+reset_reason);
 
   hd4478_moveto(1, 0);
 
@@ -156,7 +155,6 @@ int main(void)
   hd4478_moveto(0, 0);
   hd4478_puts("Starting");
 
-
   selftest_perform();
 
   wdt_enable(WDTO_2S);
@@ -178,14 +176,11 @@ int main(void)
 	  update();
 	}
 
-	xpin2 ( PIND & _BV(PD2),  &PORTB, PB0 );
-	xpin2 ( !((reset_reason == 8) &&  !(PIND & _BV(PD2))),  &PORTB, PB1 );
-
+	xpin2 ( !PIND & _BV(PD2),  &PORTB, PB0 );
+	xpin2 ( !((reset_reason == 8) &&  (PIND & _BV(PD2))),  &PORTB, PB1 );
   }
 
 }
-
-
 
 
 /*  LocalWords:  eeprom
