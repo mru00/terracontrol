@@ -39,8 +39,10 @@ increase_build_number:
 find_dummy:
 	@$(call GET_DEFINES) > /dev/null
 
+check_branch:
+	@[ $(GET_BRANCH) = "master" ] || ( echo "error: not on branch 'master'!"; false)
+
 release: find_dummy increase_build_number build sizeafter
-	@[ $(GET_BRANCH) = "master" ]
 	@git commit -a -m "committing everything for TAG $(RELEASE_FILENAME)"
 	@git tag -m "TAG for $(RELEASE_FILENAME)" $(RELEASE_FILENAME) master
 	@echo
