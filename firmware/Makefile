@@ -45,7 +45,7 @@ release: find_dummy increase_build_number build
 	@echo
 	@echo "Released to $(RELEASE_DIR)/$(RELEASE_FILENAME)"
 	@git commit -a -m "committing everything for TAG"
-	@git tag -s -m "TAG for $(RELEASE_FILENAME)" $(RELEASE_FILENAME) master
+	@git tag -m "TAG for $(RELEASE_FILENAME)" $(RELEASE_FILENAME) master
 	@echo
 
 FUSE_L = 0xef
