@@ -175,8 +175,8 @@ int main(void)
 	  update();
 	}
 
-	xpin2 ( !PIND & _BV(PD2),  &PORTB, PB0 );
-	xpin2 ( !((reset_reason == 8) &&  (PIND & _BV(PD2))),  &PORTB, PB1 );
+	xpin2 ( !(PIND & _BV(PD2)),  &PORTB, PB0 );
+	xpin2 ( !((reset_reason == 8) && (PIND & _BV(PD2))),  &PORTB, PB1 );
   }
 
 }
