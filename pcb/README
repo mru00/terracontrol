@@ -1,0 +1,12 @@
+
+
+ds1307 - SQW/OUT problem:
+
+  pullup 10k
+  pullup 4k7
+
+   bei beiden das selbe problem
+
+  geerdeter quartz loest das problem auch nicht
+ 
+  stuetzcap 100n YEAH YEAH YEAH
