@@ -517,3 +517,7 @@ device=CONNECTOR_2
 T 46000 50550 5 10 0 0 0 0 1
 footprint=con_screw_2
 }
+T 54000 40400 9 10 1 0 0 0 1
+mar 2010
+T 50000 40400 9 10 1 0 0 0 1
+ioboard

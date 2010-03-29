@@ -1,0 +1,12 @@
+Vcc	CONN3-1 U1-16 
+unnamed_net6	C2-1 U1-1 
+unnamed_net5	C4-1 U1-6 
+unnamed_net4	C3-2 U1-5 
+unnamed_net3	C3-1 U1-4 
+unnamed_net2	C2-2 U1-3 
+unnamed_net1	C1-2 U1-2 
+Tx-232	U1-14 CONN2-3 
+Rx-232	U1-13 CONN2-2 
+Tx	U1-11 CONN1-3 
+GND	CONN3-2 C4-2 C1-1 U1-15 CONN2-1 CONN1-1 
+Rx-TTL	U1-12 CONN1-2 
