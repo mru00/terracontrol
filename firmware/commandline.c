@@ -24,12 +24,13 @@
  */
 
 #include <avr/io.h>
-#include <util/delay.h>
+#include <avr/wdt.h>
 
 #include <string.h>
 #include <avr/pgmspace.h>
+//#include <avr/interrupt.h>
+
 #include "common.h"
-#include <avr/interrupt.h>
 
 
 #define MAX_LINE 40
@@ -63,8 +64,7 @@ void commandline_init(void) {
 
 void commandline_addchar(char c) {
 
-  // disabling INT0 didn't help
-  //  GICR &= ~(1<< INT0);                // disable external interrupt 0
+  wdt_reset();
 
   if ( c == '\r' || c == '\n' ) {
 	if (current_pos != current_line) processinput();
@@ -72,8 +72,6 @@ void commandline_addchar(char c) {
   else if ( c == 0x08 && current_pos > current_line ) *current_pos-- = '\0';
   else if ( current_pos < current_line + MAX_LINE )	*current_pos++ = c;
 
-  // disabling INT0 didn't help
-  // GICR |= (1<< INT0);                 //enable external interrupt 0
 }
 
 
@@ -287,17 +285,20 @@ static void parse_get_timers(void) {
 
 
 static void parse_get_title(void) {
+  uart_puts_P("+ ");
   uart_puts((const char*)settings.controller_title);
   uart_puts_P(NEWLINE);
 }
 
 static void parse_get_time(void) {
   char buf[9];
+  uart_puts_P("+ ");
   uart_puts(ttoa(time_now(), buf));
   uart_puts_P(NEWLINE);
 }
 
 static void parse_get_date(void) {
+  uart_puts_P("+ ");
   date_print(date_now()); 
   uart_puts(NEWLINE);
 }
@@ -318,11 +319,13 @@ static void parse_get_daytime(void) {
   ttoa(settings.daytime[DAYTIME_END], buf+9);
   buf[8] = ' ';
 
+  uart_puts_P("+ ");
   uart_puts(buf);
   uart_puts_P(NEWLINE);
 }
 
 static void parse_get_isdaytime(void) {
+  uart_puts_P("+ ");
   if ( time_is_daytime() ) uart_puts_P("1");
   else uart_puts_P("0");
   uart_puts_P(NEWLINE);
@@ -330,12 +333,14 @@ static void parse_get_isdaytime(void) {
 
 static void parse_get_temp(void) {
   char buf[4];
+  uart_puts_P("+ ");
   uart_puts(itoa8(temp, buf));
   uart_puts_P(NEWLINE);
 }
 
 static void parse_get_tempsetpoint(void) {
   char buf[4];
+  uart_puts_P("+ ");
   uart_puts(itoa8(settings.temp_setpoint[DAY], buf));
   uart_puts_P(" ");
   uart_puts(itoa8(settings.temp_setpoint[NIGHT], buf));
@@ -344,12 +349,14 @@ static void parse_get_tempsetpoint(void) {
 
 static void parse_get_humidity(void) {
   char buf[4];
+  uart_puts_P("+ ");
   uart_puts(itoa8(humidity, buf));
   uart_puts(NEWLINE);
 }
 
 static void parse_get_humiditysetpoint(void) {
   char buf[4];
+  uart_puts_P("+ ");
   uart_puts(itoa8(settings.humidity_setpoint[DAY], buf));
   uart_puts_P(" ");
   uart_puts(itoa8(settings.humidity_setpoint[NIGHT], buf));
@@ -358,18 +365,27 @@ static void parse_get_humiditysetpoint(void) {
 
 static void parse_get_hyst_temp(void) {
   char buf[4];
+  uart_puts_P("+ ");
   uart_puts(itoa8(settings.hyst_temp, buf));
   uart_puts(NEWLINE);
 }
 
 static void parse_get_hyst_humidity(void) {
   char buf[4];
+  uart_puts_P("+ ");
   uart_puts(itoa8(settings.hyst_humidity, buf));
   uart_puts(NEWLINE);
 }
 
-// top level parsers:
+static void parse_get_version(void) {
+  uart_puts_P("+ ");
+  uart_puts_P("TerraControl " VERSION ", Build " BUILD_ID ", mru 2010" NEWLINE );
+}
 
+
+
+
+// top level parsers:
 
 static void parse_set(void) {
   checked(char* token = parse_string());
@@ -404,7 +420,7 @@ static void parse_get(void) {
   else if (TOKEN_IS("HYST_TEMP"))        parse_get_hyst_temp();
   else if (TOKEN_IS("HYST_HUMIDITY"))    parse_get_hyst_humidity();
   else if (TOKEN_IS("OUTPUTS"))          parse_get_outputs();
-  else if (TOKEN_IS("VERSION"))          uart_puts_P("TerraControl " VERSION ", Build " BUILD_ID ", mru 2010" NEWLINE );
+  else if (TOKEN_IS("VERSION"))          parse_get_version();
   else  { parse_fail = 1; uart_puts_P(" UNKNOWN COMMAND" NEWLINE); }
 }
 

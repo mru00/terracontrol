@@ -6,6 +6,12 @@ SRC = TerraControl/Form1.cs TerraControl/Form1.Designer.cs TerraControl/Program.
 TARGET = TerraControlMono.exe
 
 
+
+publish-zip:
+	cd TerraControl/publish && zip -r TerraControl.zip *
+
+
+
 run: $(TARGET) 
 	mono $(TARGET) 
 
