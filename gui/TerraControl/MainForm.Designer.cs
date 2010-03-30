@@ -63,12 +63,13 @@
             this.textBoxIsDayTime = new System.Windows.Forms.TextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFileDialogSettings = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialogSettings = new System.Windows.Forms.SaveFileDialog();
+            this.saveFileDialogLog = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTimers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutputs)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -151,7 +152,6 @@
             // 
             // timer1
             // 
-            this.timer1.Enabled = true;
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
@@ -172,7 +172,6 @@
             this.tbTD.Name = "tbTD";
             this.tbTD.Size = new System.Drawing.Size(100, 20);
             this.tbTD.TabIndex = 22;
-            this.tbTD.Validating += new System.ComponentModel.CancelEventHandler(this.temp_Validating);
             // 
             // label7
             // 
@@ -189,7 +188,6 @@
             this.tbHD.Name = "tbHD";
             this.tbHD.Size = new System.Drawing.Size(100, 20);
             this.tbHD.TabIndex = 20;
-            this.tbHD.Validating += new System.ComponentModel.CancelEventHandler(this.humidity_Validating);
             // 
             // tbTN
             // 
@@ -197,7 +195,6 @@
             this.tbTN.Name = "tbTN";
             this.tbTN.Size = new System.Drawing.Size(100, 20);
             this.tbTN.TabIndex = 25;
-            this.tbTN.Validating += new System.ComponentModel.CancelEventHandler(this.temp_Validating);
             // 
             // label4
             // 
@@ -214,7 +211,6 @@
             this.tbHN.Name = "tbHN";
             this.tbHN.Size = new System.Drawing.Size(100, 20);
             this.tbHN.TabIndex = 23;
-            this.tbHN.Validating += new System.ComponentModel.CancelEventHandler(this.humidity_Validating);
             // 
             // label5
             // 
@@ -243,7 +239,6 @@
             this.tbDB.Name = "tbDB";
             this.tbDB.Size = new System.Drawing.Size(100, 20);
             this.tbDB.TabIndex = 28;
-            this.tbDB.Validating += new System.ComponentModel.CancelEventHandler(this.time_Validating);
             // 
             // label6
             // 
@@ -269,19 +264,17 @@
             this.tbDE.Name = "tbDE";
             this.tbDE.Size = new System.Drawing.Size(100, 20);
             this.tbDE.TabIndex = 30;
-            this.tbDE.Validating += new System.ComponentModel.CancelEventHandler(this.time_Validating);
             // 
             // checkBox1
             // 
             this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBox1.Appearance = System.Windows.Forms.Appearance.Button;
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Checked = true;
-            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.Location = new System.Drawing.Point(12, 597);
+            this.checkBox1.Location = new System.Drawing.Point(12, 591);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(117, 17);
+            this.checkBox1.Size = new System.Drawing.Size(65, 23);
             this.checkBox1.TabIndex = 32;
-            this.checkBox1.Text = "Werte aktualisieren";
+            this.checkBox1.Text = "Verbinden";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
@@ -303,6 +296,8 @@
             // 
             // dataGridViewOutputs
             // 
+            this.dataGridViewOutputs.AllowUserToAddRows = false;
+            this.dataGridViewOutputs.AllowUserToDeleteRows = false;
             this.dataGridViewOutputs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewOutputs.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
@@ -321,17 +316,20 @@
             // checkBoxLog
             // 
             this.checkBoxLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxLog.Appearance = System.Windows.Forms.Appearance.Button;
             this.checkBoxLog.AutoSize = true;
-            this.checkBoxLog.Location = new System.Drawing.Point(135, 597);
+            this.checkBoxLog.Enabled = false;
+            this.checkBoxLog.Location = new System.Drawing.Point(192, 591);
             this.checkBoxLog.Name = "checkBoxLog";
-            this.checkBoxLog.Size = new System.Drawing.Size(62, 17);
+            this.checkBoxLog.Size = new System.Drawing.Size(117, 23);
             this.checkBoxLog.TabIndex = 36;
-            this.checkBoxLog.Text = "Loggen";
+            this.checkBoxLog.Text = "Aufzeichnung starten";
             this.checkBoxLog.UseVisualStyleBackColor = true;
             this.checkBoxLog.CheckedChanged += new System.EventHandler(this.checkBoxLog_CheckedChanged);
             // 
             // buttonGraph
             // 
+            this.buttonGraph.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonGraph.Location = new System.Drawing.Point(664, 591);
             this.buttonGraph.Name = "buttonGraph";
             this.buttonGraph.Size = new System.Drawing.Size(75, 23);
@@ -386,35 +384,48 @@
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
-            // quitToolStripMenuItem
+            // loadConfigToolStripMenuItem
             // 
-            this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.quitToolStripMenuItem.Text = "Quit";
-            this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
+            this.loadConfigToolStripMenuItem.Name = "loadConfigToolStripMenuItem";
+            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.loadConfigToolStripMenuItem.Text = "Load Config";
+            this.loadConfigToolStripMenuItem.Click += new System.EventHandler(this.loadConfigToolStripMenuItem_Click);
             // 
             // saveConfigToolStripMenuItem
             // 
             this.saveConfigToolStripMenuItem.Name = "saveConfigToolStripMenuItem";
-            this.saveConfigToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveConfigToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.saveConfigToolStripMenuItem.Text = "Save Config";
             this.saveConfigToolStripMenuItem.Click += new System.EventHandler(this.saveConfigToolStripMenuItem_Click);
-            // 
-            // loadConfigToolStripMenuItem
-            // 
-            this.loadConfigToolStripMenuItem.Name = "loadConfigToolStripMenuItem";
-            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.loadConfigToolStripMenuItem.Text = "Load Config";
-            this.loadConfigToolStripMenuItem.Click += new System.EventHandler(this.loadConfigToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(136, 6);
             // 
-            // openFileDialog1
+            // quitToolStripMenuItem
             // 
-            this.openFileDialog1.FileName = "openFileDialog1";
+            this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.quitToolStripMenuItem.Text = "Quit";
+            // 
+            // openFileDialogSettings
+            // 
+            this.openFileDialogSettings.DefaultExt = "xml";
+            this.openFileDialogSettings.Filter = "Einstellungen|*.xml";
+            this.openFileDialogSettings.Title = "Einstellungen Laden";
+            // 
+            // saveFileDialogSettings
+            // 
+            this.saveFileDialogSettings.DefaultExt = "xml";
+            this.saveFileDialogSettings.Filter = "Einstellungen|*.xml";
+            this.saveFileDialogSettings.Title = "Einstellungen Speichern";
+            // 
+            // saveFileDialogLog
+            // 
+            this.saveFileDialogLog.DefaultExt = "csv";
+            this.saveFileDialogLog.Filter = "Log|*.csv";
+            this.saveFileDialogLog.Title = "Log Speichern unter";
             // 
             // MainForm
             // 
@@ -454,7 +465,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
-            this.Text = "TerraControl";
+            this.Text = "TerraControl GUI";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTimers)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutputs)).EndInit();
@@ -504,8 +515,9 @@
         private System.Windows.Forms.ToolStripMenuItem saveConfigToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem quitToolStripMenuItem;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.OpenFileDialog openFileDialogSettings;
+        private System.Windows.Forms.SaveFileDialog saveFileDialogSettings;
+        private System.Windows.Forms.SaveFileDialog saveFileDialogLog;
     }
 }
 

@@ -13,12 +13,12 @@ namespace TerraControl
 
     public partial class MainForm : Form
     {
-        private IList<Timerswitch> timerList = new BindingList<Timerswitch>();
-        private IList<Output> outputList = new BindingList<Output>();
+        private SerializableBindingList<Timerswitch> timerList = new SerializableBindingList<Timerswitch>();
+        private SerializableBindingList<Output> outputList = new SerializableBindingList<Output>();
         private Dictionary<string, Output> output_map = new Dictionary<string, Output>();
+
         private StreamWriter logfile = null;
         private ChartForm chartForm = new ChartForm();
-
 
         public MainForm()
         {
@@ -30,8 +30,6 @@ namespace TerraControl
             dataGridViewTimers.DataSource = timerList;
             dataGridViewOutputs.DataSource = outputList;
             serialPort1.ReadTimeout = 5000;
-
-            connect();
         }
 
         private void connect()
@@ -60,6 +58,10 @@ namespace TerraControl
                 timer1.Enabled = true;
 
                 chartForm.Clear();
+
+                checkBox1.Text = "Verbindung Trennen";
+                checkBoxLog.Enabled = true;
+
             }
             catch (TimeoutException e)
             {
@@ -74,6 +76,9 @@ namespace TerraControl
             timer1.Stop();
             checkBox1.Checked = false;
             closeLog();
+
+            checkBox1.Text = "Verbinden";
+            checkBoxLog.Enabled = false;
 
             if (reason != "") MessageBox.Show("Fehler beim Lesen (1): " + reason);
         }
@@ -96,7 +101,9 @@ namespace TerraControl
                     break;
                 }
 
-                Timerswitch t = new Timerswitch(i, words[5] == "1");
+                Timerswitch t = new Timerswitch();
+                t.Id = i;
+                t.Active = words[5] == "1";
                 t.OnTime = words[1];
                 t.OffTime = words[2];
                 t.Output = Convert.ToInt16(words[3]);
@@ -123,7 +130,10 @@ namespace TerraControl
                     break;
                 }
 
-                Output o = new Output(i, words[1], words[2] == "1");
+                Output o = new Output();
+                o.Active = (words[2] == "1");
+                o.Name = words[1];
+                o.Number = i;
                 output_map.Add(words[1], o);
                 outputList.Add(o);
             }
@@ -143,7 +153,7 @@ namespace TerraControl
                     break;
                 }
 
-                output_map[words[1]].active = (words[2] == "1");
+                output_map[words[1]].Active = (words[2] == "1");
             }
         }
 
@@ -184,6 +194,10 @@ namespace TerraControl
                     logfile.Write(textBoxTemp.Text + ";");
                     logfile.Write(textBoxHumidity.Text + ";");
                     logfile.Write(textBoxIsDayTime.Text + ";");
+                    foreach (Output o in outputList.AsList)
+                    {
+                        logfile.Write( (o.Active? "1" : "0") + ";");
+                    }
                     logfile.WriteLine();
                     logfile.Flush();
                 }
@@ -256,78 +270,51 @@ namespace TerraControl
 
         private void temp_Validating(object sender, CancelEventArgs e)
         {
-            try
-            {
-                int n = int.Parse(((TextBox)sender).Text);
-                if (n < 20 || n > 40)
-                {
-                    e.Cancel = true;
-                    MessageBox.Show("Wert zwischen 20 und 40 Eingeben.");
-                }
-            }
-            catch (FormatException)
-            {
-                e.Cancel = true;
-                MessageBox.Show("Zahl eingeben, ohne Einheit.");
-            }
+
         }
 
         private void time_Validating(object sender, CancelEventArgs e)
         {
-            Regex re = new Regex("[0-9][0-9]+:[0-9][0-9]+:[0-9][0-9]+");
-            if (!re.IsMatch(((TextBox)sender).Text))
-            {
-                e.Cancel = true;
-                MessageBox.Show("Zeit in hh:mm:ss eingeben.");
-            }
+
         }
 
         private void humidity_Validating(object sender, CancelEventArgs e)
         {
-            try
-            {
-                int n = int.Parse(((TextBox)sender).Text);
-                if (n < 20 || n > 100)
-                {
-                    e.Cancel = true;
-                    MessageBox.Show("Wert zwischen 20 und 100 Eingeben.");
-                }
-            }
-            catch (FormatException)
-            {
-                e.Cancel = true;
-                MessageBox.Show("Zahl eingeben, ohne Einheit.");
-            }
+
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             timer1.Enabled = checkBox1.Checked;
-            if (checkBox1.Checked) connect();
-            else disconnect("");
+            if (checkBox1.Checked)
+            {
+                checkBox1.Text = "Verbindung wird hergestellt";
+                connect();
+            }
+            else
+            {
+                disconnect("");
+            }
         }
 
         private void checkBoxLog_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBoxLog.Checked)
             {
-                FileDialog d = new SaveFileDialog();
-                d.CheckPathExists = true;
-                d.DefaultExt = "log";
-                d.RestoreDirectory = true;
-                d.Title = "Logfile speichern unter";
-                d.AddExtension = true;
-
-                if (d.ShowDialog() == DialogResult.OK)
+                if (saveFileDialogLog.ShowDialog() == DialogResult.OK)
                 {
-                    logfile = File.CreateText(d.FileName);
-                    logfile.WriteLine("timestamp;temp;humidity;isdaytime;output1;output2;output3;output4;output5");
+                    logfile = File.CreateText(saveFileDialogLog.FileName);
+                    logfile.Write("timestamp;temp;humidity;isdaytime;");
+                    foreach ( Output o in outputList.AsList) {
+                        logfile.Write(o.Name + ";");
+                    }
+                    logfile.WriteLine();
+                    checkBoxLog.Text = "Aufzeichnung beenden";
                 }
             }
             else
             {
                 closeLog();
-
             }
         }
 
@@ -339,17 +326,12 @@ namespace TerraControl
                 logfile.Close();
                 logfile = null;
             }
+            checkBoxLog.Text = "Aufzeichnung starten";
         }
 
         private void buttonGraph_Click(object sender, EventArgs e)
         {
-
             chartForm.ShowDialog();
-        }
-
-        private void quitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void loadConfigToolStripMenuItem_Click(object sender, EventArgs e)
@@ -359,11 +341,22 @@ namespace TerraControl
 
         private void saveConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Settings s = new Settings();
-            var t = File.CreateText("test.txt");
+            if (saveFileDialogSettings.ShowDialog() == DialogResult.OK)
+            {
+                var t = File.CreateText(saveFileDialogSettings.FileName);
+                Settings settings = new Settings();
 
-            XmlSerializer xml = new XmlSerializer(typeof(Settings));
-            xml.Serialize( t, s);
+                settings.outputs = outputList.AsList;
+                settings.timers = timerList.AsList;
+
+                settings.name = textBoxControllerTitle.Text;
+                settings.tempsetpoint = new string[2] { tbTD.Text, tbTN.Text };
+                settings.humsetpoint = new string[2] { tbHD.Text, tbHN.Text };
+
+
+                XmlSerializer xml = new XmlSerializer(typeof(Settings));
+                xml.Serialize(t, settings);
+            }
 
 
         }
@@ -372,30 +365,32 @@ namespace TerraControl
     public class Timerswitch
     {
         private bool enabled;
-        public bool active;
+        private bool active;
         private string onTime = "00:00:00";
         private string offTime = "00:00:00";
         private int output;
         private int id;
 
 
-        public Timerswitch(int id, bool active)
+        public Timerswitch()
         {
-            this.id = id;
-            this.active = active;
-
         }
 
         [DisplayName("Nummer")]
+        [ReadOnly(true)]
         public int Id
         {
             get { return id; }
+            set { id = value; }
+
         }
 
         [DisplayName("Aktiv")]
+        [ReadOnly(true)]
         public bool Active
         {
             get { return active; }
+            set { active = value; }
         }
 
 
@@ -434,34 +429,36 @@ namespace TerraControl
     {
         private int number;
         private string name;
-        public bool active;
+        private bool active;
 
 
-        public Output(int number, string name, bool active)
+        public Output()
         {
-
-            this.number = number;
-            this.name = name;
-            this.active = active;
         }
 
         [DisplayName("Nummer")]
+        [ReadOnly(true)]
         public int Number
         {
             get { return number; }
+            set { number = value; }
         }
 
         [DisplayName("Name")]
+        [ReadOnly(true)]
         public string Name
         {
             get { return name; }
+            set { name = value; }
         }
 
 
         [DisplayName("Aktiv")]
+        [ReadOnly(true)]
         public bool Active
         {
             get { return active; }
+            set { active = value; }
         }
 
     }

@@ -37,7 +37,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ProductName>TerraControl</ProductName>
     <PublisherName>mru</PublisherName>
-    <ApplicationRevision>9</ApplicationRevision>
+    <ApplicationRevision>12</ApplicationRevision>
     <ApplicationVersion>0.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -120,6 +120,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="SerializableBindingList.cs" />
     <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -152,7 +153,6 @@
   <ItemGroup>
     <Content Include="Desktop.ico" />
     <Content Include="Search.ico" />
-    <Content Include="XMLFile1.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\DataSources\" />

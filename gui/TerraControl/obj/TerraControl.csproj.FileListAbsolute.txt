@@ -1,8 +1,0 @@
-C:\Users\mru\Documents\Visual Studio 2005\Projects\TerraControl\TerraControl\obj\Debug\ResolveAssemblyReference.cache
-C:\Users\mru\Documents\Visual Studio 2005\Projects\TerraControl\TerraControl\obj\Debug\TerraControl.Form1.resources
-C:\Users\mru\Documents\Visual Studio 2005\Projects\TerraControl\TerraControl\obj\Debug\TerraControl.Properties.Resources.resources
-C:\Users\mru\Documents\Visual Studio 2005\Projects\TerraControl\TerraControl\obj\Debug\TerraControl.csproj.GenerateResource.Cache
-C:\Users\mru\Documents\Visual Studio 2005\Projects\TerraControl\TerraControl\bin\Debug\TerraControl.exe
-C:\Users\mru\Documents\Visual Studio 2005\Projects\TerraControl\TerraControl\bin\Debug\TerraControl.pdb
-C:\Users\mru\Documents\Visual Studio 2005\Projects\TerraControl\TerraControl\obj\Debug\TerraControl.exe
-C:\Users\mru\Documents\Visual Studio 2005\Projects\TerraControl\TerraControl\obj\Debug\TerraControl.pdb
