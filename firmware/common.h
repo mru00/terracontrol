@@ -53,7 +53,7 @@ enum {
 // maximum length of controller title
 #define CONTROLER_TITLE_LEN 9
 #define N_TIMESWITCHES 8
-
+ 
 
 
 /*  some debug flags */
@@ -69,7 +69,7 @@ enum {
 //#define PCF8574A_DUMMY
 //#define SHT11_DUMMY
 //#define DS1307_DUMMY
-//#define HD4478_DUMMY
+#define HD4478_DUMMY
 //#define SHT11_DUMMY_TMP101 1
 
 /*
