@@ -37,7 +37,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ProductName>TerraControl</ProductName>
     <PublisherName>mru</PublisherName>
-    <ApplicationRevision>12</ApplicationRevision>
+    <ApplicationRevision>13</ApplicationRevision>
     <ApplicationVersion>0.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>

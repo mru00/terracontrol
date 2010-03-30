@@ -113,6 +113,10 @@ struct global_settings_t {
   time_t  daytime[2];
   date_t  wintertime[2];
   char* controller_title[CONTROLER_TITLE_LEN];
+
+  uint8_t hyst_temp;
+  uint8_t hyst_humidity;
+
   struct timeswitch_t timeswitches[N_TIMESWITCHES];
 };
 

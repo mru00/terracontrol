@@ -45,27 +45,22 @@ static void init_ports(void) {
   PORTC = 0x00;
 }
 
-void __attribute__((constructor)) 
+static void __attribute__((constructor)) 
 uart_constructor(void) {
   uart_init(UART_BAUD_SELECT(UART_BAUD_RATE,XTAL));
 }
 
 // called every second, perform output updates
-void update(void) {
+static void update(void) {
 
   uint8_t heating_on = 0;
   uint8_t fogger_on = 0;
   uint8_t dt = time_is_daytime();
   uint8_t heating_output;
 
-  const uint8_t hyst_temp = 1;
-  const uint8_t hyst_humidity = 5;
-
   char buf[9];
 
   static uint8_t counter = 0;
-  static uint8_t counter2 = 0;
-
   static uint8_t page = 0;
 
 
@@ -78,11 +73,11 @@ void update(void) {
   if ( dt == DAY ) heating_output = OUTPUT_HEATING_LAMP;
   else  heating_output = OUTPUT_HEATING_WIRE;
 
-  if ( temp < settings.temp_setpoint[dt] ) heating_on = 1;
-  else if ( temp > settings.temp_setpoint[dt] + hyst_temp) heating_on = 0;
+  if ( temp < settings.temp_setpoint[dt] - settings.hyst_temp) heating_on = 1;
+  else if ( temp > settings.temp_setpoint[dt] ) heating_on = 0;
 
-  if ( humidity < settings.humidity_setpoint[dt] ) fogger_on = 1;
-  else if ( humidity > settings.humidity_setpoint[dt] + hyst_humidity) fogger_on = 0;
+  if ( humidity < settings.humidity_setpoint[dt] - settings.hyst_humidity) fogger_on = 1;
+  else if ( humidity > settings.humidity_setpoint[dt] ) fogger_on = 0;
 
   // heating and fogger only when necessary
   output_values |= heating_on << heating_output;

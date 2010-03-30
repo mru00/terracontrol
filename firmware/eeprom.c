@@ -51,7 +51,8 @@ void eeprom_init(void) {
 	settings.humidity_setpoint[0] = 50;
 	settings.humidity_setpoint[1] = 55;
 
-
+	settings.hyst_temp = 3;
+	settings.hyst_humidity = 3;
 	
 	timeswitch_set(0, 
 				   time_from_hms(11, 0, 0), 

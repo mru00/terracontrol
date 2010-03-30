@@ -1,3 +1,24 @@
+########################################################################
+# This file is part of TerraControl.								   #
+# 																	   #
+# TerraControl is free software; you can redistribute it and/or modify #
+# it under the terms of the GNU General Public License as published	   #
+# by the Free Software Foundation; either version 2 of the License, or #
+# (at your option) any later version.								   #
+# 																	   #
+# TerraControl is distributed in the hope that it will be useful,	   #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of	   #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the		   #
+# GNU General Public License for more details.						   #
+# 																	   #
+# You should have received a copy of the GNU General Public License	   #
+# along with TerraControl; if not, write to the Free Software		   #
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 #
+# USA																   #
+# Written and (c) by mru											   #
+# Contact <mru@fourier> for comment & bug reports					   #
+########################################################################
+
 
 #F_OSC = 11059201L
 F_OSC = 12288000L
@@ -35,6 +56,8 @@ erase_flash:
 increase_build_number:
 	@touch $(BUILD_ID_FILE)
 	@echo "#define BUILD_ID \"$$(( $(BUILD) + 1 ))\"" > $(BUILD_ID_FILE)
+	@echo
+	@echo " actual build number: " $$(( $(BUILD) + 1))
 
 find_dummy:
 	@$(call GET_DEFINES) > /dev/null
@@ -42,7 +65,7 @@ find_dummy:
 check_branch:
 	@[ $(GET_BRANCH) = "master" ] || ( echo "error: not on branch 'master'!"; false)
 
-release: check_branch find_dummy increase_build_number build sizeafter
+release: check_branch find_dummy build sizeafter
 	@git commit -a -m "committing everything for TAG $(RELEASE_FILENAME)"
 	@git tag -m "TAG for $(RELEASE_FILENAME)" $(RELEASE_FILENAME) master
 	@echo

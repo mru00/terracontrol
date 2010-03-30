@@ -1,7 +1,24 @@
+/************************************************************************
+ * This file is part of TerraControl.								    *
+ * 																	    *
+ * TerraControl is free software; you can redistribute it and/or modify *
+ * it under the terms of the GNU General Public License as published    *
+ * by the Free Software Foundation; either version 2 of the License, or *
+ * (at your option) any later version.								    *
+ * 																	    *
+ * TerraControl is distributed in the hope that it will be useful,	    *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of	    *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the	    *
+ * GNU General Public License for more details.						    *
+ * 																	    *
+ * You should have received a copy of the GNU General Public License    *
+ * along with TerraControl; if not, write to the Free Software		    *
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 *
+ * USA																    *
+ * Written and (c) by mru											    *
+ * Contact <mru@fourier> for comment & bug reports					    *
+ ************************************************************************/
 /* 
- * terrarium control
- * mru, november 2009
- *
  * serial commandline interface
  * 
  */
@@ -226,6 +243,16 @@ static void parse_set_humiditysetpoint(void) {
   checked(settings.humidity_setpoint[NIGHT] = parse_int());
 }
 
+
+static void parse_set_hyst_temp(void) {
+  checked(settings.hyst_temp = parse_int());
+}
+
+static void parse_set_hyst_humidity(void) {
+  checked(settings.hyst_humidity = parse_int());
+}
+
+
 static void parse_set_output(void) {
   checked(uint8_t id = parse_int());
 
@@ -329,6 +356,17 @@ static void parse_get_humiditysetpoint(void) {
   uart_puts_P(NEWLINE);
 }
 
+static void parse_get_hyst_temp(void) {
+  char buf[4];
+  uart_puts(itoa8(settings.hyst_temp, buf));
+  uart_puts(NEWLINE);
+}
+
+static void parse_get_hyst_humidity(void) {
+  char buf[4];
+  uart_puts(itoa8(settings.hyst_humidity, buf));
+  uart_puts(NEWLINE);
+}
 
 // top level parsers:
 
@@ -343,8 +381,10 @@ static void parse_set(void) {
   else if (TOKEN_IS("TIMER"))            parse_set_timer();
   else if (TOKEN_IS("TEMPSETPOINT"))     parse_set_tempsetpoint();
   else if (TOKEN_IS("HUMIDITYSETPOINT")) parse_set_humiditysetpoint();
+  else if (TOKEN_IS("HYST_TEMP"))        parse_set_hyst_temp();
+  else if (TOKEN_IS("HYST_HUMIDITY"))    parse_set_hyst_humidity();
   else if (TOKEN_IS("OUTPUT"))           parse_set_output();
-  else  { parse_fail = 1; uart_puts_P(" UNKNOWN COMMAND"); }
+  else  { parse_fail = 1; uart_puts_P(" UNKNOWN COMMAND" NEWLINE); }
 }
 
 
@@ -361,9 +401,11 @@ static void parse_get(void) {
   else if (TOKEN_IS("TEMPSETPOINT"))     parse_get_tempsetpoint();
   else if (TOKEN_IS("HUMIDITY"))         parse_get_humidity();
   else if (TOKEN_IS("HUMIDITYSETPOINT")) parse_get_humiditysetpoint();
+  else if (TOKEN_IS("HYST_TEMP"))        parse_get_hyst_temp();
+  else if (TOKEN_IS("HYST_HUMIDITY"))    parse_get_hyst_humidity();
   else if (TOKEN_IS("OUTPUTS"))          parse_get_outputs();
   else if (TOKEN_IS("VERSION"))          uart_puts_P("TerraControl " VERSION ", Build " BUILD_ID ", mru 2010" NEWLINE );
-  else  { parse_fail = 1; uart_puts_P(" UNKNOWN COMMAND"); }
+  else  { parse_fail = 1; uart_puts_P(" UNKNOWN COMMAND" NEWLINE); }
 }
 
 // parser start symbol
