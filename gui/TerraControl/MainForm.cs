@@ -25,7 +25,6 @@ namespace TerraControl
         private StreamWriter logfile = null;
         private ChartForm chartForm = new ChartForm();
 
-        private DataGridViewComboBoxColumn outputcol = new DataGridViewComboBoxColumn();
 
         public MainForm()
         {
@@ -43,15 +42,25 @@ namespace TerraControl
             serialPort1.ReadTimeout = 5000;
 
 
-
+            dataGridViewTimers.Columns["Enabled"].ToolTipText = "Diese Zeitschaltuhr wird verwendet";
+            dataGridViewTimers.Columns["Active"].ToolTipText = "Diese Zeitschaltuhr ist gerade eingeschaltet";
             dataGridViewTimers.Columns["OffTime"].DefaultCellStyle.Format = "HH:mm:ss";
+            dataGridViewTimers.Columns["OffTime"].ToolTipText = "Zu dieser Zeit wird die Zeitschaltuhr ausgeschaltet";
+
             dataGridViewTimers.Columns["OnTime"].DefaultCellStyle.Format = "HH:mm:ss";
+            dataGridViewTimers.Columns["OnTime"].ToolTipText = "Zu dieser Zeit wird die Zeitschaltuhr eingeschaltet";
+
             dataGridViewTimers.Columns.Remove("Output");
+
+            var outputcol = new DataGridViewComboBoxColumn();
             outputcol.DataPropertyName = "Output";
             outputcol.DisplayMember = "Name";
             outputcol.ValueMember = "Number";
-            dataGridViewTimers.Columns.Add(outputcol);
+            outputcol.Name = "Ausgang";
+            outputcol.ToolTipText = "Zeigt an, welcher Ausgang mit dieser Zeitschaltuhr verbunden ist";
             outputcol.DataSource = bsOutputs;
+
+            dataGridViewTimers.Columns.Add(outputcol);
 
             bsTimers.DataError += new BindingManagerDataErrorEventHandler(bsTimers_DataError);
         }
@@ -163,7 +172,7 @@ namespace TerraControl
                     break;
                 }
 
-                Output o = (Output) bsOutputs.AddNew();
+                Output o = (Output)bsOutputs.AddNew();
                 o.Active = (words[2] == "1");
                 o.Name = words[1];
                 o.Number = i;
@@ -239,7 +248,7 @@ namespace TerraControl
                     logfile.Write(textBoxIsDayTime.Text + ";");
                     foreach (Output o in outputList)
                     {
-                        logfile.Write( (o.Active? "1" : "0") + ";");
+                        logfile.Write((o.Active ? "1" : "0") + ";");
                     }
                     logfile.WriteLine();
                     logfile.Flush();
@@ -350,7 +359,8 @@ namespace TerraControl
                 {
                     logfile = File.CreateText(saveFileDialogLog.FileName);
                     logfile.Write("timestamp;temp;humidity;isdaytime;");
-                    foreach ( Output o in outputList) {
+                    foreach (Output o in outputList)
+                    {
                         logfile.Write(o.Name + ";");
                     }
                     logfile.WriteLine();
@@ -407,6 +417,11 @@ namespace TerraControl
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new AboutBox().ShowDialog();
         }
     }
 

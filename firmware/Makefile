@@ -60,7 +60,7 @@ increase_build_number:
 	@touch $(BUILD_ID_FILE)
 	@echo "#define BUILD_ID \"$$(( $(BUILD) + 1 ))\"" > $(BUILD_ID_FILE)
 	@echo
-	@echo " actual build number: " $$(( $(BUILD) + 1))
+	@echo " new build number: " $$(( $(BUILD) + 1))
 
 find_dummy:
 	@$(call GET_DEFINES) > /dev/null

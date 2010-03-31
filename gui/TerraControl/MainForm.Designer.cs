@@ -73,6 +73,8 @@
             this.tbDB = new System.Windows.Forms.MaskedTextBox();
             this.tbDE = new System.Windows.Forms.MaskedTextBox();
             this.textBoxControllerTitle = new System.Windows.Forms.MaskedTextBox();
+            this.hilfeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTimers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutputs)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -150,6 +152,7 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewTimers.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridViewTimers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewTimers.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.dataGridViewTimers.Location = new System.Drawing.Point(12, 296);
             this.dataGridViewTimers.MultiSelect = false;
             this.dataGridViewTimers.Name = "dataGridViewTimers";
@@ -328,7 +331,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.hilfeToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(898, 24);
@@ -343,33 +347,33 @@
             this.toolStripSeparator1,
             this.quitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
-            this.fileToolStripMenuItem.Text = "File";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+            this.fileToolStripMenuItem.Text = "Datei";
             // 
             // loadConfigToolStripMenuItem
             // 
             this.loadConfigToolStripMenuItem.Name = "loadConfigToolStripMenuItem";
-            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.loadConfigToolStripMenuItem.Text = "Load Config";
             this.loadConfigToolStripMenuItem.Click += new System.EventHandler(this.loadConfigToolStripMenuItem_Click);
             // 
             // saveConfigToolStripMenuItem
             // 
             this.saveConfigToolStripMenuItem.Name = "saveConfigToolStripMenuItem";
-            this.saveConfigToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.saveConfigToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveConfigToolStripMenuItem.Text = "Save Config";
             this.saveConfigToolStripMenuItem.Click += new System.EventHandler(this.saveConfigToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(136, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
             // quitToolStripMenuItem
             // 
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
-            this.quitToolStripMenuItem.Text = "Quit";
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.quitToolStripMenuItem.Text = "Beenden";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
             // openFileDialogSettings
@@ -464,6 +468,21 @@
             this.textBoxControllerTitle.Name = "textBoxControllerTitle";
             this.textBoxControllerTitle.Size = new System.Drawing.Size(100, 20);
             this.textBoxControllerTitle.TabIndex = 51;
+            // 
+            // hilfeToolStripMenuItem
+            // 
+            this.hilfeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aboutToolStripMenuItem});
+            this.hilfeToolStripMenuItem.Name = "hilfeToolStripMenuItem";
+            this.hilfeToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.hilfeToolStripMenuItem.Text = "Hilfe";
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -568,6 +587,8 @@
         private System.Windows.Forms.MaskedTextBox tbDB;
         private System.Windows.Forms.MaskedTextBox tbDE;
         private System.Windows.Forms.MaskedTextBox textBoxControllerTitle;
+        private System.Windows.Forms.ToolStripMenuItem hilfeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     }
 }
 
