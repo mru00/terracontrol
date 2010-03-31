@@ -7,18 +7,25 @@ using System.IO;
 using ZedGraph;
 using System.Drawing;
 using System.Xml.Serialization;
+using System.Collections;
+using System.Data;
 
 namespace TerraControl
 {
 
     public partial class MainForm : Form
     {
-        private SerializableBindingList<Timerswitch> timerList = new SerializableBindingList<Timerswitch>();
-        private SerializableBindingList<Output> outputList = new SerializableBindingList<Output>();
+        private List<Timerswitch> timerList = new List<Timerswitch>();
+        private List<Output> outputList = new List<Output>();
         private Dictionary<string, Output> output_map = new Dictionary<string, Output>();
+
+        private BindingSource bsOutputs = new BindingSource();
+        private BindingSource bsTimers = new BindingSource();
 
         private StreamWriter logfile = null;
         private ChartForm chartForm = new ChartForm();
+
+        private DataGridViewComboBoxColumn outputcol = new DataGridViewComboBoxColumn();
 
         public MainForm()
         {
@@ -27,9 +34,31 @@ namespace TerraControl
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            dataGridViewTimers.DataSource = timerList;
-            dataGridViewOutputs.DataSource = outputList;
+            bsOutputs.DataSource = outputList;
+            bsTimers.DataSource = timerList;
+
+
+            dataGridViewTimers.DataSource = bsTimers;
+            dataGridViewOutputs.DataSource = bsOutputs;
             serialPort1.ReadTimeout = 5000;
+
+
+
+            dataGridViewTimers.Columns["OffTime"].DefaultCellStyle.Format = "HH:mm:ss";
+            dataGridViewTimers.Columns["OnTime"].DefaultCellStyle.Format = "HH:mm:ss";
+            dataGridViewTimers.Columns.Remove("Output");
+            outputcol.DataPropertyName = "Output";
+            outputcol.DisplayMember = "Name";
+            outputcol.ValueMember = "Number";
+            dataGridViewTimers.Columns.Add(outputcol);
+            outputcol.DataSource = bsOutputs;
+
+            bsTimers.DataError += new BindingManagerDataErrorEventHandler(bsTimers_DataError);
+        }
+
+        void bsTimers_DataError(object sender, BindingManagerDataErrorEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void connect()
@@ -47,13 +76,16 @@ namespace TerraControl
                 if (!response.StartsWith("OK")) throw new TimeoutException();
 
 
-                readTimers();
                 readOutputs();
+                readTimers();
+
                 readFromController2("get tempsetpoint", tbTD, tbTN);
                 readFromController2("get humiditysetpoint", tbHD, tbHN);
                 readFromController2("get daytime", tbDB, tbDE);
-                readFromController("get title", textBoxControllerTitle);
-                readFromController("get version", textBoxVersion);
+                textBoxControllerTitle.Text = readFromController("get title");
+                numericHystTemp.Text = readFromController("get hyst_temp");
+                numericHystHum.Text = readFromController("get hyst_humidity");
+                textBoxVersion.Text = readFromController("get version");
 
                 timer1.Enabled = true;
 
@@ -61,6 +93,8 @@ namespace TerraControl
 
                 checkBox1.Text = "Verbindung Trennen";
                 checkBoxLog.Enabled = true;
+                buttonGraph.Enabled = true;
+                button1.Enabled = true;
 
             }
             catch (TimeoutException e)
@@ -79,20 +113,22 @@ namespace TerraControl
 
             checkBox1.Text = "Verbinden";
             checkBoxLog.Enabled = false;
+            buttonGraph.Enabled = false;
+            button1.Enabled = false;
 
             if (reason != "") MessageBox.Show("Fehler beim Lesen (1): " + reason);
         }
 
         private void readTimers()
         {
-            serialPort1.Write("get timers\r\n");
+            serialPort1.WriteLine("get timers");
 
-            timerList.Clear();
+            bsTimers.Clear();
             string l;
             for (int i = 0; ; i++)
             {
 
-                l = serialPort1.ReadLine().Trim('\r');
+                l = serialPort1.ReadLine();
                 string[] words = l.Split(' ');
 
                 if (words[0] != "+")
@@ -101,27 +137,24 @@ namespace TerraControl
                     break;
                 }
 
-                Timerswitch t = new Timerswitch();
+                Timerswitch t = (Timerswitch)bsTimers.AddNew();
                 t.Id = i;
                 t.Active = words[5] == "1";
-                t.OnTime = words[1];
-                t.OffTime = words[2];
+                t.OnTime = DateTime.Parse(words[1]);
+                t.OffTime = DateTime.Parse(words[2]);
                 t.Output = Convert.ToInt16(words[3]);
                 t.Enabled = (words[4] == "1");
-
-                timerList.Add(t);
             }
         }
 
         private void readOutputs()
         {
-            serialPort1.Write("get outputs\r\n");
-
-            outputList.Clear();
+            serialPort1.WriteLine("get outputs");
+            bsOutputs.Clear();
             output_map.Clear();
             for (int i = 0; ; i++)
             {
-                string l = serialPort1.ReadLine().Trim('\r');
+                string l = serialPort1.ReadLine();
                 string[] words = l.Split(' ');
 
                 if (words[0] != "+")
@@ -130,12 +163,12 @@ namespace TerraControl
                     break;
                 }
 
-                Output o = new Output();
+                Output o = (Output) bsOutputs.AddNew();
                 o.Active = (words[2] == "1");
                 o.Name = words[1];
                 o.Number = i;
                 output_map.Add(words[1], o);
-                outputList.Add(o);
+
             }
         }
 
@@ -157,34 +190,44 @@ namespace TerraControl
             }
         }
 
-        private void readFromController(string cmd, TextBox target)
+        private string readFromController(string cmd)
         {
-            serialPort1.WriteLine(cmd + "\r");
-            target.Text = serialPort1.ReadLine().Trim('\r');
-            string response = serialPort1.ReadLine().Trim('\r');
-            if (!response.StartsWith("OK")) throw new TimeoutException(response);
+            string text;
+            serialPort1.WriteLine(cmd);
+            text = serialPort1.ReadLine();
+            if (!text.StartsWith("+ ")) throw new TimeoutException(text);
+            string val = text.Substring(2);
+
+            text = serialPort1.ReadLine();
+            if (!text.StartsWith("OK")) throw new TimeoutException(text);
+
+            return val;
         }
 
-        private void readFromController2(string cmd, TextBox target1, TextBox target2)
+
+        private void readFromController2(string cmd, Control target1, Control target2)
         {
-            serialPort1.WriteLine(cmd + "\r");
-            string text = serialPort1.ReadLine().Trim('\r');
-            string response = serialPort1.ReadLine().Trim('\r');
-            if (!response.StartsWith("OK")) throw new TimeoutException(response);
+            serialPort1.WriteLine(cmd);
+            string text = serialPort1.ReadLine();
+            if (!text.StartsWith("+ ")) throw new TimeoutException(text);
 
             string[] subs = text.Split(' ');
-            target1.Text = subs[0];
-            target2.Text = subs[1];
+            target1.Text = subs[1];
+            target2.Text = subs[2];
+
+            text = serialPort1.ReadLine();
+            if (!text.StartsWith("OK")) throw new TimeoutException(text);
+
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             try
             {
-                readFromController("get time", textBoxControllerTime);
-                readFromController("get temp", textBoxTemp);
-                readFromController("get humidity", textBoxHumidity);
-                readFromController("get isdaytime", textBoxIsDayTime);
+                textBoxControllerTime.Text = readFromController("get time");
+                textBoxTemp.Text = readFromController("get temp");
+                textBoxHumidity.Text = readFromController("get humidity");
+                textBoxIsDayTime.Text = readFromController("get isdaytime");
 
                 updateOutputs();
                 dataGridViewOutputs.Invalidate();
@@ -194,7 +237,7 @@ namespace TerraControl
                     logfile.Write(textBoxTemp.Text + ";");
                     logfile.Write(textBoxHumidity.Text + ";");
                     logfile.Write(textBoxIsDayTime.Text + ";");
-                    foreach (Output o in outputList.AsList)
+                    foreach (Output o in outputList)
                     {
                         logfile.Write( (o.Active? "1" : "0") + ";");
                     }
@@ -233,6 +276,8 @@ namespace TerraControl
                 writeToController(String.Format("set daytime {0} {1}", tbDB.Text, tbDE.Text));
                 writeToController(String.Format("set title {0}", textBoxControllerTitle.Text));
 
+                writeToController(String.Format("set hyst_humidity {0}", numericHystHum.Text));
+                writeToController(String.Format("set hyst_temp {0}", numericHystTemp.Text));
 
                 if (checkBoxUseTime.Checked)
                     writeToController(String.Format("set time {0}:{1}:{2}",
@@ -244,7 +289,7 @@ namespace TerraControl
                 foreach (Timerswitch s in timerList)
                 {
                     writeToController(String.Format("set timer {0} {1} {2} {3} {4} ",
-                            s.Id, s.OnTime, s.OffTime, s.Output, s.Enabled ? "1" : "0"));
+                            s.Id, s.OnTime.ToString("HH:mm:ss"), s.OffTime.ToString("HH:mm:ss"), s.Output, s.Enabled ? "1" : "0"));
                 }
 
 
@@ -257,7 +302,7 @@ namespace TerraControl
                 readFromController2("get tempsetpoint", tbTD, tbTN);
                 readFromController2("get humiditysetpoint", tbHD, tbHN);
                 readFromController2("get daytime", tbDB, tbDE);
-                readFromController("get title", textBoxControllerTitle);
+                textBoxControllerTitle.Text = readFromController("get title");
                 timer1.Enabled = t1e;
 
             }
@@ -305,7 +350,7 @@ namespace TerraControl
                 {
                     logfile = File.CreateText(saveFileDialogLog.FileName);
                     logfile.Write("timestamp;temp;humidity;isdaytime;");
-                    foreach ( Output o in outputList.AsList) {
+                    foreach ( Output o in outputList) {
                         logfile.Write(o.Name + ";");
                     }
                     logfile.WriteLine();
@@ -346,8 +391,8 @@ namespace TerraControl
                 var t = File.CreateText(saveFileDialogSettings.FileName);
                 Settings settings = new Settings();
 
-                settings.outputs = outputList.AsList;
-                settings.timers = timerList.AsList;
+                settings.outputs = outputList;
+                settings.timers = timerList;
 
                 settings.name = textBoxControllerTitle.Text;
                 settings.tempsetpoint = new string[2] { tbTD.Text, tbTN.Text };
@@ -357,8 +402,6 @@ namespace TerraControl
                 XmlSerializer xml = new XmlSerializer(typeof(Settings));
                 xml.Serialize(t, settings);
             }
-
-
         }
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -369,17 +412,13 @@ namespace TerraControl
 
     public class Timerswitch
     {
+        private int id;
         private bool enabled;
         private bool active;
-        private string onTime = "00:00:00";
-        private string offTime = "00:00:00";
+        private DateTime onTime;
+        private DateTime offTime;
         private int output;
-        private int id;
 
-
-        public Timerswitch()
-        {
-        }
 
         [DisplayName("Nummer")]
         [ReadOnly(true)]
@@ -407,20 +446,21 @@ namespace TerraControl
         }
 
         [DisplayName("Einschaltzeitpunkt")]
-        public string OnTime
+        public DateTime OnTime
         {
             get { return onTime; }
             set { onTime = value; }
         }
 
         [DisplayName("Ausschaltzeitpunkt")]
-        public string OffTime
+        public DateTime OffTime
         {
             get { return offTime; }
             set { offTime = value; }
         }
 
         [DisplayName("Ausgang")]
+        [TypeConverter(typeof(OutputConverter))]
         public int Output
         {
             get { return output; }
@@ -468,4 +508,67 @@ namespace TerraControl
 
     }
 
+    public class OutputConverter : System.ComponentModel.TypeConverter
+    {
+        private ArrayList values;
+        public OutputConverter()
+        {
+            // Initializes the standard values list with defaults.
+            values = new ArrayList(new string[] { "Lampe1", "Lampe2" });
+        }
+
+        // Indicates this converter provides a list of standard values.
+        public override bool GetStandardValuesSupported(System.ComponentModel.ITypeDescriptorContext context)
+        {
+            return true;
+        }
+
+        // Returns a StandardValuesCollection of standard value objects.
+        public override System.ComponentModel.TypeConverter.StandardValuesCollection GetStandardValues(System.ComponentModel.ITypeDescriptorContext context)
+        {
+            // Passes the local integer array.
+            StandardValuesCollection svc =
+                new StandardValuesCollection(values);
+            return svc;
+        }
+
+        // Returns true for a sourceType of string to indicate that 
+        // conversions from string to integer are supported. (The 
+        // GetStandardValues method requires a string to native type 
+        // conversion because the items in the drop-down list are 
+        // translated to string.)
+        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType)
+        {
+            if (sourceType == typeof(string))
+                return true;
+            else
+                return base.CanConvertFrom(context, sourceType);
+        }
+
+        // If the type of the value to convert is string, parses the string 
+        // and returns the integer to set the value of the property to. 
+        // This example first extends the integer array that supplies the 
+        // standard values collection if the user-entered value is not 
+        // already in the array.
+        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+        {
+            if (value.GetType() == typeof(string))
+            {
+                // Parses the string to get the integer to set to the property.
+                int newVal = int.Parse((string)value);
+
+                // Tests whether new integer is already in the list.
+                if (!values.Contains(newVal))
+                {
+                    // If the integer is not in list, adds it in order.
+                    values.Add(newVal);
+                    values.Sort();
+                }
+                // Returns the integer value to assign to the property.
+                return newVal;
+            }
+            else
+                return base.ConvertFrom(context, culture, value);
+        }
+    }
 }

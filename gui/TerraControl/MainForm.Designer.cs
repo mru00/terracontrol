@@ -40,20 +40,13 @@
             this.dataGridViewTimers = new System.Windows.Forms.DataGridView();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.button1 = new System.Windows.Forms.Button();
-            this.tbTD = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.tbHD = new System.Windows.Forms.TextBox();
-            this.tbTN = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.tbHN = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.checkBoxUseTime = new System.Windows.Forms.CheckBox();
-            this.tbDB = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
-            this.tbDE = new System.Windows.Forms.TextBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.textBoxControllerTitle = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.dataGridViewOutputs = new System.Windows.Forms.DataGridView();
             this.checkBoxLog = new System.Windows.Forms.CheckBox();
@@ -70,9 +63,25 @@
             this.openFileDialogSettings = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialogSettings = new System.Windows.Forms.SaveFileDialog();
             this.saveFileDialogLog = new System.Windows.Forms.SaveFileDialog();
+            this.numericHystTemp = new System.Windows.Forms.NumericUpDown();
+            this.numericHystHum = new System.Windows.Forms.NumericUpDown();
+            this.label11 = new System.Windows.Forms.Label();
+            this.tbTN = new System.Windows.Forms.NumericUpDown();
+            this.tbHN = new System.Windows.Forms.NumericUpDown();
+            this.tbTD = new System.Windows.Forms.NumericUpDown();
+            this.tbHD = new System.Windows.Forms.NumericUpDown();
+            this.tbDB = new System.Windows.Forms.MaskedTextBox();
+            this.tbDE = new System.Windows.Forms.MaskedTextBox();
+            this.textBoxControllerTitle = new System.Windows.Forms.MaskedTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTimers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutputs)).BeginInit();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericHystTemp)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericHystHum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbTN)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbHN)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbTD)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbHD)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -142,9 +151,9 @@
             this.dataGridViewTimers.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridViewTimers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewTimers.Location = new System.Drawing.Point(12, 296);
+            this.dataGridViewTimers.MultiSelect = false;
             this.dataGridViewTimers.Name = "dataGridViewTimers";
             this.dataGridViewTimers.RowHeadersVisible = false;
-            this.dataGridViewTimers.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewTimers.ShowEditingIcon = false;
             this.dataGridViewTimers.ShowRowErrors = false;
             this.dataGridViewTimers.Size = new System.Drawing.Size(874, 270);
@@ -158,6 +167,7 @@
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Enabled = false;
             this.button1.Location = new System.Drawing.Point(745, 591);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(141, 23);
@@ -166,51 +176,23 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.program_Click);
             // 
-            // tbTD
-            // 
-            this.tbTD.Location = new System.Drawing.Point(259, 144);
-            this.tbTD.Name = "tbTD";
-            this.tbTD.Size = new System.Drawing.Size(100, 20);
-            this.tbTD.TabIndex = 22;
-            // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(275, 128);
+            this.label7.Location = new System.Drawing.Point(258, 128);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(69, 13);
             this.label7.TabIndex = 21;
             this.label7.Text = "Sollwert Tag:";
             // 
-            // tbHD
-            // 
-            this.tbHD.Location = new System.Drawing.Point(259, 175);
-            this.tbHD.Name = "tbHD";
-            this.tbHD.Size = new System.Drawing.Size(100, 20);
-            this.tbHD.TabIndex = 20;
-            // 
-            // tbTN
-            // 
-            this.tbTN.Location = new System.Drawing.Point(401, 144);
-            this.tbTN.Name = "tbTN";
-            this.tbTN.Size = new System.Drawing.Size(100, 20);
-            this.tbTN.TabIndex = 25;
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(411, 128);
+            this.label4.Location = new System.Drawing.Point(347, 128);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(79, 13);
             this.label4.TabIndex = 24;
             this.label4.Text = "Sollwert Nacht:";
-            // 
-            // tbHN
-            // 
-            this.tbHN.Location = new System.Drawing.Point(401, 175);
-            this.tbHN.Name = "tbHN";
-            this.tbHN.Size = new System.Drawing.Size(100, 20);
-            this.tbHN.TabIndex = 23;
             // 
             // label5
             // 
@@ -233,13 +215,6 @@
             this.checkBoxUseTime.Text = "Computerzeit uebernehmen";
             this.checkBoxUseTime.UseVisualStyleBackColor = true;
             // 
-            // tbDB
-            // 
-            this.tbDB.Location = new System.Drawing.Point(122, 227);
-            this.tbDB.Name = "tbDB";
-            this.tbDB.Size = new System.Drawing.Size(100, 20);
-            this.tbDB.TabIndex = 28;
-            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -258,32 +233,18 @@
             this.label8.TabIndex = 31;
             this.label8.Text = "Ende Tageszeit:";
             // 
-            // tbDE
-            // 
-            this.tbDE.Location = new System.Drawing.Point(122, 253);
-            this.tbDE.Name = "tbDE";
-            this.tbDE.Size = new System.Drawing.Size(100, 20);
-            this.tbDE.TabIndex = 30;
-            // 
             // checkBox1
             // 
-            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox1.Appearance = System.Windows.Forms.Appearance.Button;
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(12, 591);
+            this.checkBox1.Location = new System.Drawing.Point(387, 591);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(65, 23);
             this.checkBox1.TabIndex = 32;
             this.checkBox1.Text = "Verbinden";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
-            // textBoxControllerTitle
-            // 
-            this.textBoxControllerTitle.Location = new System.Drawing.Point(122, 33);
-            this.textBoxControllerTitle.Name = "textBoxControllerTitle";
-            this.textBoxControllerTitle.Size = new System.Drawing.Size(100, 20);
-            this.textBoxControllerTitle.TabIndex = 34;
             // 
             // label9
             // 
@@ -302,7 +263,7 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewOutputs.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridViewOutputs.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewOutputs.Location = new System.Drawing.Point(552, 12);
+            this.dataGridViewOutputs.Location = new System.Drawing.Point(552, 27);
             this.dataGridViewOutputs.Name = "dataGridViewOutputs";
             this.dataGridViewOutputs.ReadOnly = true;
             this.dataGridViewOutputs.RowHeadersVisible = false;
@@ -310,16 +271,16 @@
             this.dataGridViewOutputs.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewOutputs.ShowEditingIcon = false;
             this.dataGridViewOutputs.ShowRowErrors = false;
-            this.dataGridViewOutputs.Size = new System.Drawing.Size(334, 278);
+            this.dataGridViewOutputs.Size = new System.Drawing.Size(334, 263);
             this.dataGridViewOutputs.TabIndex = 35;
             // 
             // checkBoxLog
             // 
-            this.checkBoxLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxLog.Appearance = System.Windows.Forms.Appearance.Button;
             this.checkBoxLog.AutoSize = true;
             this.checkBoxLog.Enabled = false;
-            this.checkBoxLog.Location = new System.Drawing.Point(192, 591);
+            this.checkBoxLog.Location = new System.Drawing.Point(496, 591);
             this.checkBoxLog.Name = "checkBoxLog";
             this.checkBoxLog.Size = new System.Drawing.Size(117, 23);
             this.checkBoxLog.TabIndex = 36;
@@ -330,7 +291,8 @@
             // buttonGraph
             // 
             this.buttonGraph.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonGraph.Location = new System.Drawing.Point(664, 591);
+            this.buttonGraph.Enabled = false;
+            this.buttonGraph.Location = new System.Drawing.Point(644, 591);
             this.buttonGraph.Name = "buttonGraph";
             this.buttonGraph.Size = new System.Drawing.Size(75, 23);
             this.buttonGraph.TabIndex = 37;
@@ -387,26 +349,26 @@
             // loadConfigToolStripMenuItem
             // 
             this.loadConfigToolStripMenuItem.Name = "loadConfigToolStripMenuItem";
-            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.loadConfigToolStripMenuItem.Text = "Load Config";
             this.loadConfigToolStripMenuItem.Click += new System.EventHandler(this.loadConfigToolStripMenuItem_Click);
             // 
             // saveConfigToolStripMenuItem
             // 
             this.saveConfigToolStripMenuItem.Name = "saveConfigToolStripMenuItem";
-            this.saveConfigToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveConfigToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.saveConfigToolStripMenuItem.Text = "Save Config";
             this.saveConfigToolStripMenuItem.Click += new System.EventHandler(this.saveConfigToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(136, 6);
             // 
             // quitToolStripMenuItem
             // 
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
             this.quitToolStripMenuItem.Text = "Quit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
@@ -428,32 +390,110 @@
             this.saveFileDialogLog.Filter = "Log|*.csv";
             this.saveFileDialogLog.Title = "Log Speichern unter";
             // 
+            // numericHystTemp
+            // 
+            this.numericHystTemp.Location = new System.Drawing.Point(448, 144);
+            this.numericHystTemp.Name = "numericHystTemp";
+            this.numericHystTemp.Size = new System.Drawing.Size(77, 20);
+            this.numericHystTemp.TabIndex = 42;
+            // 
+            // numericHystHum
+            // 
+            this.numericHystHum.Location = new System.Drawing.Point(448, 176);
+            this.numericHystHum.Name = "numericHystHum";
+            this.numericHystHum.Size = new System.Drawing.Size(77, 20);
+            this.numericHystHum.TabIndex = 43;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(447, 128);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(57, 13);
+            this.label11.TabIndex = 44;
+            this.label11.Text = "Hysterese:";
+            // 
+            // tbTN
+            // 
+            this.tbTN.Location = new System.Drawing.Point(350, 145);
+            this.tbTN.Name = "tbTN";
+            this.tbTN.Size = new System.Drawing.Size(76, 20);
+            this.tbTN.TabIndex = 45;
+            // 
+            // tbHN
+            // 
+            this.tbHN.Location = new System.Drawing.Point(350, 175);
+            this.tbHN.Name = "tbHN";
+            this.tbHN.Size = new System.Drawing.Size(76, 20);
+            this.tbHN.TabIndex = 46;
+            // 
+            // tbTD
+            // 
+            this.tbTD.Location = new System.Drawing.Point(261, 145);
+            this.tbTD.Name = "tbTD";
+            this.tbTD.Size = new System.Drawing.Size(66, 20);
+            this.tbTD.TabIndex = 47;
+            // 
+            // tbHD
+            // 
+            this.tbHD.Location = new System.Drawing.Point(261, 176);
+            this.tbHD.Name = "tbHD";
+            this.tbHD.Size = new System.Drawing.Size(66, 20);
+            this.tbHD.TabIndex = 48;
+            // 
+            // tbDB
+            // 
+            this.tbDB.Location = new System.Drawing.Point(122, 223);
+            this.tbDB.Mask = "00:00:00";
+            this.tbDB.Name = "tbDB";
+            this.tbDB.Size = new System.Drawing.Size(100, 20);
+            this.tbDB.TabIndex = 49;
+            // 
+            // tbDE
+            // 
+            this.tbDE.Location = new System.Drawing.Point(122, 253);
+            this.tbDE.Mask = "00:00:00";
+            this.tbDE.Name = "tbDE";
+            this.tbDE.Size = new System.Drawing.Size(100, 20);
+            this.tbDE.TabIndex = 50;
+            // 
+            // textBoxControllerTitle
+            // 
+            this.textBoxControllerTitle.Location = new System.Drawing.Point(122, 33);
+            this.textBoxControllerTitle.Mask = "aaaaaaaa";
+            this.textBoxControllerTitle.Name = "textBoxControllerTitle";
+            this.textBoxControllerTitle.Size = new System.Drawing.Size(100, 20);
+            this.textBoxControllerTitle.TabIndex = 51;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(898, 626);
+            this.Controls.Add(this.textBoxControllerTitle);
+            this.Controls.Add(this.tbDE);
+            this.Controls.Add(this.tbDB);
+            this.Controls.Add(this.tbHD);
+            this.Controls.Add(this.tbTD);
+            this.Controls.Add(this.tbHN);
+            this.Controls.Add(this.tbTN);
+            this.Controls.Add(this.label11);
+            this.Controls.Add(this.numericHystHum);
+            this.Controls.Add(this.numericHystTemp);
             this.Controls.Add(this.textBoxIsDayTime);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.textBoxVersion);
             this.Controls.Add(this.buttonGraph);
             this.Controls.Add(this.checkBoxLog);
             this.Controls.Add(this.dataGridViewOutputs);
-            this.Controls.Add(this.textBoxControllerTitle);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label8);
-            this.Controls.Add(this.tbDE);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.tbDB);
             this.Controls.Add(this.checkBoxUseTime);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.tbTN);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.tbHN);
-            this.Controls.Add(this.tbTD);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.tbHD);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.dataGridViewTimers);
             this.Controls.Add(this.textBoxHumidity);
@@ -472,6 +512,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutputs)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericHystTemp)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericHystHum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbTN)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbHN)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbTD)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbHD)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -489,20 +535,13 @@
         private System.Windows.Forms.DataGridView dataGridViewTimers;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox tbTD;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox tbHD;
-        private System.Windows.Forms.TextBox tbTN;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox tbHN;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.CheckBox checkBoxUseTime;
-        private System.Windows.Forms.TextBox tbDB;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.TextBox tbDE;
         private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.TextBox textBoxControllerTitle;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.DataGridView dataGridViewOutputs;
         private System.Windows.Forms.CheckBox checkBoxLog;
@@ -519,6 +558,16 @@
         private System.Windows.Forms.OpenFileDialog openFileDialogSettings;
         private System.Windows.Forms.SaveFileDialog saveFileDialogSettings;
         private System.Windows.Forms.SaveFileDialog saveFileDialogLog;
+        private System.Windows.Forms.NumericUpDown numericHystTemp;
+        private System.Windows.Forms.NumericUpDown numericHystHum;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.NumericUpDown tbTN;
+        private System.Windows.Forms.NumericUpDown tbHN;
+        private System.Windows.Forms.NumericUpDown tbTD;
+        private System.Windows.Forms.NumericUpDown tbHD;
+        private System.Windows.Forms.MaskedTextBox tbDB;
+        private System.Windows.Forms.MaskedTextBox tbDE;
+        private System.Windows.Forms.MaskedTextBox textBoxControllerTitle;
     }
 }
 

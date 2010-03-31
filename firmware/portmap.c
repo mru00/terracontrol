@@ -42,7 +42,7 @@ void portmap_print_output(uint8_t output) {
   switch(output) {
   case OUTPUT_L1:           uart_puts_P("Lampe1"); break;
   case OUTPUT_L2:           uart_puts_P("Lampe2"); break;
-  case OUTPUT_FOGGER:       uart_puts_P("Nebler"); break;
+  case OUTPUT_FOGGER:       uart_puts_P("Befeuchter"); break;
   case OUTPUT_HEATING_WIRE: uart_puts_P("HeizDraht"); break;
   case OUTPUT_HEATING_LAMP: uart_puts_P("HeizLampe"); break;
 #ifdef PORTMAP_DEBUG

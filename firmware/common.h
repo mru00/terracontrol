@@ -69,7 +69,7 @@ enum {
 //#define PCF8574A_DUMMY
 //#define SHT11_DUMMY
 //#define DS1307_DUMMY
-#define HD4478_DUMMY
+//#define HD4478_DUMMY
 //#define SHT11_DUMMY_TMP101 1
 
 /*

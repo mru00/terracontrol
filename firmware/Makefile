@@ -47,6 +47,9 @@ DATE = $(shell date +%Y%m%d)
 HOST = $(shell uname -n)
 RELEASE_FILENAME = $(TARGET)-$(HOST)-$(DATE)-$(VERSION)-b$(BUILD)
 
+TAGS: $(SRC)
+	etags *.c *.h /usr/lib/avr/include/*.h /usr/lib/avr/include/util/*.h /usr/lib/avr/include//avr/*.h /usr/lib/avr/include/compat/*.h
+
 get_defines: $(SRC)
 	$(call GET_DEFINES)
 

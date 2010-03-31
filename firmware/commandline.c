@@ -23,19 +23,16 @@
  * 
  */
 
-#include <avr/io.h>
 #include <avr/wdt.h>
-
 #include <string.h>
 #include <avr/pgmspace.h>
-//#include <avr/interrupt.h>
 
 #include "common.h"
 
 
 #define MAX_LINE 40
 
-#define TOKEN_IS(str) (strncmp_P(token, PSTR(str), strlen(token)+1)==0)
+#define TOKEN_IS(str) (strncasecmp_P(token, PSTR(str), strlen(token)+1)==0)
 
 static char current_line[MAX_LINE];
 static char* current_pos;
@@ -85,7 +82,7 @@ void processinput(void) {
   tokenize_pos = &current_line[0];
 
   // uppercase the input -> case insensitive parsing
-  strupr(current_line); // cost: 22 bytes
+  //  strupr(current_line); // cost: 22 bytes
 
   parse();
   
